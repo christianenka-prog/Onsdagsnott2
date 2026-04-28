@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onsdagsnøtt</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f7f6f3; --surface: #ffffff; --border: #e2e0db;
+    --text: #1a1917; --muted: #888580; --accent: #1a1917;
+    --y-bg:#fef9e7; --y-bd:#d4a017; --y-tx:#7a5c00;
+    --g-bg:#f0f7ec; --g-bd:#4a8c3a; --g-tx:#2d5c22;
+    --b-bg:#eef4fb; --b-bd:#2b6cb0; --b-tx:#1a4a7a;
+    --p-bg:#f3f0fe; --p-bd:#6b46c1; --p-tx:#44267a;
+    --r: 6px; --font:'DM Sans',sans-serif; --mono:'DM Mono',monospace;
+  }
+  @media (prefers-color-scheme:dark) {
+    :root {
+      --bg:#111110; --surface:#1c1c1a; --border:#2e2e2b;
+      --text:#e8e6e1; --muted:#666360; --accent:#e8e6e1;
+      --y-bg:#2a2200; --y-bd:#c9a227; --y-tx:#f0c040;
+      --g-bg:#0d1f08; --g-bd:#3b7a2e; --g-tx:#7ec86e;
+      --b-bg:#071525; --b-bd:#2b6cb0; --b-tx:#7ab8f5;
+      --p-bg:#130d28; --p-bd:#6b46c1; --p-tx:#b794f4;
+    }
+  }
+  body { background:var(--bg); color:var(--text); font-family:var(--font); min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:3rem 1rem 4rem; }
+  .screen { display:none; width:100%; max-width:560px; }
+  .screen.active { display:block; }
+
+  /* LOGIN */
+  #loginScreen { text-align:center; padding-top:4rem; }
+  #loginScreen h1 { font-size:32px; font-weight:500; letter-spacing:-.02em; margin-bottom:6px; }
+  #loginScreen p { font-size:17px; color:var(--muted); margin-bottom:2.5rem; }
+  .input-row { display:flex; gap:8px; max-width:340px; margin:0 auto 1rem; }
+  input[type=text] { flex:1; padding:12px 16px; border-radius:var(--r); border:1px solid var(--border); background:var(--surface); color:var(--text); font-family:var(--font); font-size:17px; outline:none; transition:border-color .15s; }
+  input[type=text]:focus { border-color:var(--accent); }
+  .btn { padding:13px 24px; border-radius:var(--r); border:1px solid var(--accent); background:var(--accent); color:var(--bg); font-family:var(--font); font-size:16px; font-weight:500; cursor:pointer; transition:opacity .15s; white-space:nowrap; }
+  .btn:hover { opacity:.85; }
+  .btn:disabled { opacity:.4; cursor:not-allowed; }
+  .btn.ghost { background:transparent; color:var(--text); border-color:var(--border); }
+  .btn.ghost:hover { background:var(--surface); }
+  .err { font-size:14px; color:#c0392b; margin-top:10px; min-height:18px; }
+  .divider { display:flex; align-items:center; gap:12px; max-width:340px; margin:1.5rem auto; color:var(--muted); font-size:13px; }
+  .divider::before, .divider::after { content:''; flex:1; height:1px; background:var(--border); }
+  .archive-btn { display:block; max-width:340px; margin:0 auto; padding:12px; border-radius:var(--r); border:1px solid var(--border); background:transparent; color:var(--muted); font-family:var(--font); font-size:15px; cursor:pointer; transition:all .15s; text-align:center; }
+  .archive-btn:hover { border-color:var(--accent); color:var(--text); background:var(--surface); }
+
+  /* ARCHIVE */
+  #archiveScreen { padding-top:2rem; }
+  #archiveScreen h2 { font-size:22px; font-weight:500; margin-bottom:6px; }
+  #archiveScreen p { font-size:14px; color:var(--muted); margin-bottom:1.8rem; }
+  .archive-list { display:flex; flex-direction:column; gap:8px; margin-bottom:2rem; }
+  .archive-item { padding:14px 16px; border-radius:var(--r); border:1px solid var(--border); background:var(--surface); cursor:pointer; transition:all .15s; display:flex; justify-content:space-between; align-items:center; }
+  .archive-item:hover { border-color:var(--accent); }
+  .archive-item .a-title { font-size:15px; font-weight:500; }
+  .archive-item .a-sub { font-size:13px; color:var(--muted); margin-top:2px; }
+  .archive-item .a-arrow { color:var(--muted); font-size:18px; }
+  .back-btn { font-size:14px; color:var(--muted); background:none; border:none; cursor:pointer; padding:0; text-decoration:underline; margin-bottom:1.5rem; display:inline-block; font-family:var(--font); }
+
+  /* DONE */
+  #doneScreen { text-align:center; padding-top:5rem; }
+  #doneScreen h2 { font-size:24px; font-weight:500; margin-bottom:8px; }
+  #doneScreen p { font-size:16px; color:var(--muted); margin-bottom:2rem; }
+
+  /* GAME */
+  .game-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.8rem; }
+  .game-title { font-size:19px; font-weight:500; }
+  .timer { font-family:var(--mono); font-size:19px; color:var(--muted); letter-spacing:.05em; }
+  .archive-badge { font-size:12px; background:var(--border); color:var(--muted); padding:3px 8px; border-radius:20px; }
+  .mistakes { display:flex; align-items:center; gap:8px; margin-bottom:1.2rem; }
+  .mistakes span { font-size:16px; color:var(--muted); }
+  .dot { width:14px; height:14px; border-radius:50%; background:var(--text); transition:all .3s; }
+  .dot.used { background:var(--border); transform:scale(.75); }
+  .solved-area { display:flex; flex-direction:column; gap:6px; margin-bottom:6px; }
+  .solved-card { border-radius:var(--r); padding:12px 16px; animation:fadeUp .3s ease forwards; }
+  .solved-card .s-label { font-size:13px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; margin-bottom:2px; }
+  .solved-card .s-cat { font-size:16px; font-weight:500; }
+  .solved-card .s-words { font-size:14px; margin-top:2px; opacity:.75; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:12px; }
+  .tile { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:20px 8px; text-align:center; font-size:20px; font-weight:700; cursor:pointer; user-select:none; transition:border-color .12s,background .12s,transform .1s; min-height:120px; display:flex; align-items:center; justify-content:center; line-height:1.3; color:var(--text); }
+  .tile:hover { border-color:var(--accent); }
+  .tile.selected { border:1.5px solid var(--accent); background:var(--bg); transform:translateY(-2px); }
+  .tile.shake { animation:shake .4s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+  .msg { font-size:16px; color:var(--muted); text-align:center; min-height:20px; margin-bottom:10px; }
+  .game-controls { display:flex; gap:8px; justify-content:center; }
+
+  /* RESULT */
+  #resultScreen { text-align:center; padding-top:3rem; }
+  #resultScreen h2 { font-size:28px; font-weight:500; margin-bottom:6px; }
+  .result-sub { font-size:17px; color:var(--muted); margin-bottom:2rem; }
+  .stat-row { display:flex; justify-content:center; gap:2.5rem; margin-bottom:2.5rem; }
+  .stat-val { font-family:var(--mono); font-size:36px; font-weight:500; }
+  .stat-label { font-size:13px; color:var(--muted); margin-top:2px; }
+  .lb-title { font-size:12px; font-weight:500; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px; }
+  table.lb { width:100%; border-collapse:collapse; }
+  table.lb td { padding:12px 4px; font-size:15px; border-bottom:1px solid var(--border); }
+  table.lb tr:last-child td { border-bottom:none; }
+  .rank { color:var(--muted); font-family:var(--mono); width:28px; }
+  .lname { font-weight:500; text-align:left; }
+  .ltime { font-family:var(--mono); text-align:right; }
+  .lfeil { color:var(--muted); font-size:13px; text-align:right; padding-left:12px; }
+  tr.me td { color:var(--accent); font-weight:500; }
+  .play-again-btn { margin-top:1.5rem; display:inline-block; font-size:14px; color:var(--muted); background:none; border:none; cursor:pointer; text-decoration:underline; font-family:var(--font); }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="screen active">
+  <h1>Onsdagsnøtt 🧠</h1>
+  <p>Skriv inn brukernavnet ditt for å starte.<br>Du kan bare spille ukens nøtt én gang.</p>
+  <div class="input-row">
+    <input type="text" id="nameInput" placeholder="Brukernavn" maxlength="20" autocomplete="off" />
+    <button class="btn" id="startBtn" onclick="startGame()">Start</button>
+  </div>
+  <div class="err" id="loginErr"></div>
+  <div class="divider">eller</div>
+  <button class="archive-btn" onclick="show('archiveScreen')">📂 Se tidligere nøtter</button>
+</div>
+
+<!-- ARCHIVE -->
+<div id="archiveScreen" class="screen">
+  <button class="back-btn" onclick="show('loginScreen')">← Tilbake</button>
+  <h2>Tidligere nøtter</h2>
+  <p>Spill gamle nøtter for moro skyld — teller ikke på scoreboardet.</p>
+  <div class="archive-list" id="archiveList"></div>
+</div>
+
+<!-- ALREADY PLAYED -->
+<div id="doneScreen" class="screen">
+  <h2>Du har allerede spilt!</h2>
+  <p>Én spilling per nettleser. Kom tilbake neste uke. 😄</p>
+  <div id="doneBoard" style="margin-top:1.5rem"></div>
+  <button class="archive-btn" style="margin-top:1.5rem" onclick="show('archiveScreen')">📂 Se tidligere nøtter</button>
+</div>
+
+<!-- GAME -->
+<div id="gameScreen" class="screen">
+  <div class="game-header">
+    <span class="game-title" id="playerLabel"></span>
+    <span class="timer" id="timerEl">00:00</span>
+  </div>
+  <div class="mistakes"><span>Feil igjen:</span><div class="dot" id="d1"></div><div class="dot" id="d2"></div><div class="dot" id="d3"></div><div class="dot" id="d4"></div></div>
+  <div class="solved-area" id="solvedArea"></div>
+  <div class="grid" id="grid"></div>
+  <div class="msg" id="msg"></div>
+  <div class="game-controls">
+    <button class="btn ghost" onclick="doShuffle()">Bland</button>
+    <button class="btn ghost" onclick="clearSel()">Tøm</button>
+    <button class="btn" id="guessBtn" onclick="doGuess()" disabled>Gjett</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="resultScreen" class="screen">
+  <h2 id="resultTitle"></h2>
+  <p class="result-sub" id="resultSub"></p>
+  <div class="stat-row" id="statRow">
+    <div class="stat"><div class="stat-val" id="rTime">—</div><div class="stat-label">tid</div></div>
+    <div class="stat"><div class="stat-val" id="rFeil">—</div><div class="stat-label">feil</div></div>
+    <div class="stat"><div class="stat-val" id="rRank">—</div><div class="stat-label">plass</div></div>
+  </div>
+  <div class="lb-title" id="lbTitle">Resultatliste</div>
+  <div id="leaderboard"></div>
+  <button class="play-again-btn" onclick="show('archiveScreen')">📂 Spill en gammel nøtt</button>
+</div>
+
+<script>
+// ---- PUZZLES ----
+const ACTIVE_PUZZLE = {
+  id: 'nott_2025w19b',
+  title: 'Ukens nøtt',
+  groups: [
+    {bg:'var(--y-bg)',bd:'var(--y-bd)',tx:'var(--y-tx)',label:'Lett',      cat:'Slang for penger',              words:['GRYN','SPENN','LAPPER','DALER']},
+    {bg:'var(--g-bg)',bd:'var(--g-bd)',tx:'var(--g-tx)',label:'Medium',    cat:'Pizzakjeder i Norge',           words:['PEPPES','PIZZABAKEREN','DOMINOS','EGON']},
+    {bg:'var(--b-bg)',bd:'var(--b-bd)',tx:'var(--b-tx)',label:'Vanskelig', cat:'Kjente dyr med egennavn',       words:['HARAMBE','JULIUS','LASSIE','DOLLY']},
+    {bg:'var(--p-bg)',bd:'var(--p-bd)',tx:'var(--p-tx)',label:'Djevelsk',  cat:'Alle heter Donald til fornavn', words:['TRUMP','DUCK','GLOVER','SUTHERLAND']},
+  ]
+};
+
+const ARCHIVE = [
+  {
+    id: 'nott_2025w18',
+    title: 'Uke 18',
+    subtitle: 'Dyr gjemt i ord · Norske kommuner',
+    groups: [
+      {bg:'var(--y-bg)',bd:'var(--y-bd)',tx:'var(--y-tx)',label:'Lett',      cat:'Kan stå foran "-tur"',           words:['SPASER','FJELL','KVELD','LUFTE']},
+      {bg:'var(--g-bg)',bd:'var(--g-bd)',tx:'var(--g-tx)',label:'Medium',    cat:'Ord for å sovne',                words:['DUPPE AV','NIKKE','DABBE AV','SLUMRE']},
+      {bg:'var(--b-bg)',bd:'var(--b-bd)',tx:'var(--b-tx)',label:'Vanskelig', cat:'Også en norsk kommune',          words:['MOSS','SAND','TØNNE','TINN']},
+      {bg:'var(--p-bg)',bd:'var(--p-bd)',tx:'var(--p-tx)',label:'Djevelsk',  cat:'Inneholder et skjult norsk dyr', words:['TAPET','GULVET','BREVET','FORMEL']},
+    ]
+  }
+];
+
+// ---- STATE ----
+const LS_PLAYED = ACTIVE_PUZZLE.id + '_played';
+const LS_NAME   = ACTIVE_PUZZLE.id + '_name';
+const LB_KEY    = ACTIVE_PUZZLE.id + '_lb';
+
+let playerName = '';
+let currentPuzzle = null;
+let isArchiveMode = false;
+let tiles = [];
+let selected = [];
+let mistakes = 4;
+let solved = [];
+let elapsed = 0;
+let timerInterval = null;
+let myTs = null;
+
+// ---- STORAGE ----
+async function lbGet() {
+  try { const r = await window.storage.get(LB_KEY, true); return r ? JSON.parse(r.value) : []; } catch { return []; }
+}
+async function lbSet(data) {
+  try { await window.storage.set(LB_KEY, JSON.stringify(data), true); } catch {}
+}
+
+// ---- SCREENS ----
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ---- ON LOAD ----
+window.addEventListener('load', () => {
+  renderArchiveList();
+  if (localStorage.getItem(LS_PLAYED)) {
+    playerName = localStorage.getItem(LS_NAME) || '';
+    show('doneScreen');
+    renderDoneBoard();
+  }
+});
+
+document.getElementById('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') startGame(); });
+
+// ---- ARCHIVE LIST ----
+function renderArchiveList() {
+  const el = document.getElementById('archiveList');
+  el.innerHTML = '';
+  ARCHIVE.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'archive-item';
+    div.innerHTML = `<div><div class="a-title">${p.title}</div><div class="a-sub">${p.subtitle}</div></div><div class="a-arrow">›</div>`;
+    div.onclick = () => startArchiveGame(p);
+    el.appendChild(div);
+  });
+}
+
+// ---- START ACTIVE GAME ----
+async function startGame() {
+  const name = document.getElementById('nameInput').value.trim();
+  if (!name) { document.getElementById('loginErr').textContent = 'Skriv inn et brukernavn.'; return; }
+
+  if (localStorage.getItem(LS_PLAYED)) {
+    playerName = localStorage.getItem(LS_NAME) || name;
+    show('doneScreen');
+    renderDoneBoard();
+    return;
+  }
+
+  playerName = name;
+  document.getElementById('loginErr').textContent = '';
+  document.getElementById('startBtn').disabled = true;
+  document.getElementById('playerLabel').textContent = name;
+
+  isArchiveMode = false;
+  loadPuzzle(ACTIVE_PUZZLE.groups);
+  show('gameScreen');
+
+  timerInterval = setInterval(() => {
+    elapsed++;
+    document.getElementById('timerEl').textContent = fmt(elapsed);
+  }, 1000);
+}
+
+// ---- START ARCHIVE GAME ----
+function startArchiveGame(puzzle) {
+  isArchiveMode = true;
+  playerName = '';
+  document.getElementById('playerLabel').innerHTML = `${puzzle.title} <span class="archive-badge">Arkiv</span>`;
+  document.getElementById('timerEl').textContent = '00:00';
+  loadPuzzle(puzzle.groups);
+  show('gameScreen');
+
+  timerInterval = setInterval(() => {
+    elapsed++;
+    document.getElementById('timerEl').textContent = fmt(elapsed);
+  }, 1000);
+}
+
+// ---- LOAD PUZZLE ----
+function loadPuzzle(groups) {
+  currentPuzzle = groups;
+  tiles = [...groups.flatMap(g => g.words)];
+  selected = [];
+  mistakes = 4;
+  solved = [];
+  elapsed = 0;
+  myTs = null;
+  clearInterval(timerInterval);
+
+  // Reset dots
+  for (let i = 1; i <= 4; i++) document.getElementById('d'+i).classList.remove('used');
+  document.getElementById('solvedArea').innerHTML = '';
+  document.getElementById('msg').textContent = '';
+  document.getElementById('guessBtn').disabled = true;
+
+  doShuffle();
+}
+
+// ---- TIMER ----
+function fmt(s) { return String(Math.floor(s / 60)).padStart(2,'0') + ':' + String(s % 60).padStart(2,'0'); }
+
+// ---- GAME ----
+function renderGrid() {
+  const g = document.getElementById('grid'); g.innerHTML = '';
+  tiles.filter(w => !solved.includes(w)).forEach(w => {
+    const d = document.createElement('div');
+    d.className = 'tile' + (selected.includes(w) ? ' selected' : '');
+    d.textContent = w;
+    d.onclick = () => toggle(w);
+    g.appendChild(d);
+  });
+}
+
+function toggle(w) {
+  if (selected.includes(w)) selected = selected.filter(x => x !== w);
+  else { if (selected.length >= 4) return; selected.push(w); }
+  renderGrid();
+  document.getElementById('guessBtn').disabled = selected.length !== 4;
+}
+
+function clearSel() { selected = []; renderGrid(); document.getElementById('guessBtn').disabled = true; }
+
+function doShuffle() {
+  for (let i = tiles.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+  }
+  clearSel(); renderGrid();
+}
+
+function doGuess() {
+  const grp = currentPuzzle.find(g => g.words.every(w => selected.includes(w)) && selected.every(w => g.words.includes(w)));
+  if (grp) {
+    solved.push(...grp.words); tiles = tiles.filter(w => !grp.words.includes(w));
+    showSolvedCard(grp); selected = []; renderGrid();
+    document.getElementById('guessBtn').disabled = true;
+    setMsg('Riktig!');
+    if (solved.length === 16) setTimeout(finishGame, 500);
+  } else {
+    const oneAway = currentPuzzle.some(g => g.words.filter(w => selected.includes(w)).length === 3);
+    mistakes--; updateDots();
+    document.querySelectorAll('.tile.selected').forEach(t => { t.classList.add('shake'); setTimeout(() => t.classList.remove('shake'), 450); });
+    setTimeout(() => clearSel(), 120);
+    if (mistakes === 0) { setMsg('Ingen forsøk igjen!'); setTimeout(finishGame, 800); }
+    else setMsg(oneAway ? 'Én unna — prøv igjen!' : 'Feil. Prøv igjen.');
+  }
+}
+
+function showSolvedCard(g) {
+  const el = document.createElement('div'); el.className = 'solved-card';
+  el.style.cssText = `background:${g.bg};border:1px solid ${g.bd}`;
+  el.innerHTML = `<div class="s-label" style="color:${g.bd}">${g.label}</div><div class="s-cat" style="color:${g.tx}">${g.cat}</div><div class="s-words" style="color:${g.tx}">${g.words.join(' · ')}</div>`;
+  document.getElementById('solvedArea').appendChild(el);
+}
+
+function updateDots() { for (let i = 1; i <= 4; i++) { if (i > mistakes) document.getElementById('d'+i).classList.add('used'); } }
+function setMsg(t) { const el = document.getElementById('msg'); el.textContent = t; setTimeout(() => { if (el.textContent === t) el.textContent = ''; }, 2500); }
+
+async function finishGame() {
+  clearInterval(timerInterval);
+  const feil = 4 - mistakes;
+  const won = solved.length === 16;
+
+  document.getElementById('resultTitle').textContent = won ? 'Bra jobbet! 🎉' : 'Bedre lykke neste gang';
+  document.getElementById('rTime').textContent = fmt(elapsed);
+  document.getElementById('rFeil').textContent = feil;
+
+  if (isArchiveMode) {
+    // Archive mode: no scoreboard, no lock, just personal result
+    document.getElementById('rRank').textContent = '—';
+    document.getElementById('lbTitle').style.display = 'none';
+    document.getElementById('leaderboard').innerHTML = '<p style="font-size:14px;color:var(--muted);text-align:center">Arkivspilling teller ikke på scoreboardet.</p>';
+    document.getElementById('resultSub').textContent = won
+      ? `Du fullførte på ${fmt(elapsed)} med ${feil} feil.`
+      : `Du fikk ${solved.length / 4} av 4 grupper.`;
+  } else {
+    // Active mode: lock browser, save to leaderboard
+    localStorage.setItem(LS_PLAYED, '1');
+    localStorage.setItem(LS_NAME, playerName);
+    myTs = Date.now();
+    let lb = await lbGet();
+    lb.push({ name: playerName, time: elapsed, feil, ts: myTs });
+    lb.sort((a, b) => a.feil !== b.feil ? a.feil - b.feil : a.time - b.time);
+    await lbSet(lb);
+    const rank = lb.findIndex(e => e.ts === myTs) + 1;
+    document.getElementById('rRank').textContent = '#' + rank;
+    document.getElementById('lbTitle').style.display = '';
+    document.getElementById('resultSub').textContent = won
+      ? `Du fullførte på ${fmt(elapsed)} med ${feil} feil.`
+      : `Du fikk ${solved.length / 4} av 4 grupper.`;
+    renderLB(lb, myTs, 'leaderboard');
+  }
+
+  show('resultScreen');
+}
+
+function renderLB(lb, ts, containerId) {
+  const el = document.getElementById(containerId);
+  if (!lb.length) { el.innerHTML = '<p style="font-size:14px;color:var(--muted)">Ingen resultater ennå.</p>'; return; }
+  let html = '<table class="lb">';
+  lb.slice(0, 20).forEach((e, i) => {
+    const me = e.ts === ts;
+    html += `<tr${me ? ' class="me"' : ''}><td class="rank">${i+1}</td><td class="lname">${esc(e.name)}</td><td class="ltime">${fmt(e.time)}</td><td class="lfeil">${e.feil} feil</td></tr>`;
+  });
+  html += '</table>';
+  el.innerHTML = html;
+}
+
+async function renderDoneBoard() {
+  const lb = await lbGet();
+  const el = document.getElementById('doneBoard');
+  if (!lb.length) { el.innerHTML = '<p style="font-size:14px;color:var(--muted)">Ingen resultater ennå.</p>'; return; }
+  let html = '<div class="lb-title">Resultatliste</div><table class="lb">';
+  lb.slice(0, 20).forEach((e, i) => {
+    const me = e.name.toLowerCase() === playerName.toLowerCase();
+    html += `<tr${me ? ' class="me"' : ''}><td class="rank">${i+1}</td><td class="lname">${esc(e.name)}</td><td class="ltime">${fmt(e.time)}</td><td class="lfeil">${e.feil} feil</td></tr>`;
+  });
+  html += '</table>';
+  el.innerHTML = html;
+}
+
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+</body>
+</html>
