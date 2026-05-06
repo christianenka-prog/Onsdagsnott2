@@ -272,7 +272,7 @@
 </div>
 
 <script>
-const ACTIVE_PUZZLE = {
+let ACTIVE_PUZZLE = {
   id: 'nott_2025w19e',
   title: 'Ukens nøtt',
   groups: [
@@ -283,7 +283,7 @@ const ACTIVE_PUZZLE = {
   ]
 };
 
-const ARCHIVE = [
+let ARCHIVE = [
   {
     id: 'nott_2025w18',
     title: 'Uke 18',
@@ -678,19 +678,12 @@ function generateCode() {
   }, 300);
 }
 
-function copyCode() {
-  const el = document.getElementById('codeOutput');
-  el.select();
-  document.execCommand('copy');
-  document.getElementById('copyMsg').textContent = '✓ Kopiert!';
-  setTimeout(() => document.getElementById('copyMsg').textContent = '', 2500);
-}
 
 function clearAdmin() {
   ['aId','aTitle','aSubtitle','ycat','yw','gcat','gw','bcat','bw','pcat','pw2'].forEach(id => {
     document.getElementById(id).value = '';
   });
-  document.getElementById('codeSection').style.display = 'none';
+
   document.getElementById('genErr').textContent = '';
 }
 
@@ -769,7 +762,7 @@ window.addEventListener('load', function() {
 
       <div class="admin-actions">
         <button class="btn ghost" onclick="previewPuzzle()">Forhåndsvisning</button>
-        <button class="btn" onclick="generateCode()">Generer kode</button>
+        <button class="btn" onclick="generateCode()">Generer ny nøtt ✓</button>
         <button class="btn ghost" onclick="clearAdmin()">Tøm</button>
       </div>
       <div id="previewSection" style="display:none">
