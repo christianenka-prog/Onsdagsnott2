@@ -63,9 +63,6 @@
   .back-btn { font-size:14px; color:var(--muted); background:none; border:none; cursor:pointer; padding:0 0 1rem; text-decoration:underline; display:inline-block; font-family:var(--font); }
 
   /* DONE */
-  #doneScreen { text-align:center; padding-top:3rem; }
-  #doneScreen h2 { font-size:26px; font-weight:800; margin-bottom:8px; }
-  #doneScreen p { font-size:16px; color:var(--muted); margin-bottom:2rem; }
 
   /* GAME */
   .game-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:1.2rem; border-bottom:1px solid var(--border); margin-bottom:1.8rem; }
@@ -143,7 +140,6 @@
   .play-again-btn { display:block; text-align:center; font-size:14px; color:var(--muted); background:none; border:none; cursor:pointer; text-decoration:underline; font-family:var(--font); margin-top:0.5rem; }
 
 
-  /* PERSONAL HISTORY */
   .history-section { margin-top:2rem; text-align:left; }
   .history-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:10px; }
   .history-wrap { border:1.5px solid var(--border); border-radius:var(--r); overflow:hidden; }
@@ -301,9 +297,6 @@ const ARCHIVE = [
   }
 ];
 
-const LS_PLAYED = ACTIVE_PUZZLE.id + '_played';
-const LS_NAME   = ACTIVE_PUZZLE.id + '_name';
-const LB_KEY    = ACTIVE_PUZZLE.id + '_lb';
 
 let playerName = '';
 let currentPuzzle = null;
@@ -314,7 +307,6 @@ let mistakes = 0;
 let solved = [];
 let elapsed = 0;
 let timerInterval = null;
-let myTs = null;
 let guessHistory = [];
 
 
@@ -493,39 +485,11 @@ function showResult() {
   show('resultScreen');
 }
 
-function rankEmoji(i) {
-  return i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i+1)+'';
-}
-function rankClass(i) {
-  return i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
-}
-function renderLB(lb, ts, containerId) {
-  const el = document.getElementById(containerId);
-  if (!lb.length) { el.innerHTML = '<div style="padding:1rem;font-size:14px;color:var(--muted);text-align:center">Ingen resultater ennå.</div>'; return; }
-  let html = '';
-  lb.slice(0,20).forEach((e,i) => {
-    const me = e.ts === ts;
-    html += `<div class="lb-row${me?' me':''}">
-      <span class="lb-rank ${rankClass(i)}">${rankEmoji(i)}</span>
-      <span class="lb-name">${esc(e.name)}</span>
-      <span class="lb-time">${fmt(e.time)}</span>
-      <span class="lb-feil" style="text-align:right">${e.feil} feil</span>
-    </div>`;
-  });
-  el.innerHTML = html;
-}
 
-async function renderDoneBoard() {
-  const lb = await lbGet();
-  const el = document.getElementById('doneBoard');
-  if (!lb.length) { el.innerHTML = '<p style="font-size:14px;color:var(--muted)">Ingen resultater ennå.</p>'; return; }
-  let html = '<div class="lb-title">Resultatliste</div><table class="lb">';
-  lb.slice(0,20).forEach((e,i) => {
-    const me = e.name.toLowerCase() === playerName.toLowerCase();
-    html += `<tr${me?' class="me"':''}><td class="rank">${i+1}</td><td class="lname">${esc(e.name)}</td><td class="ltime">${fmt(e.time)}</td><td class="lfeil">${e.feil} feil</td></tr>`;
-  });
-  html += '</table>'; el.innerHTML = html;
-}
+
+
+
+
 
 function copyResult() {
   const title = document.getElementById('resultTitle').textContent;
@@ -544,25 +508,7 @@ function copyResult() {
   });
 }
 
-async function showPublicLB() {
-  const lb = await lbGet();
-  const el = document.getElementById('publicLeaderboard');
-  if (!lb.length) {
-    el.innerHTML = '<div style="padding:1rem;font-size:14px;color:var(--muted);text-align:center">Ingen har spilt ennå.</div>';
-  } else {
-    let html = '';
-    lb.slice(0,20).forEach((e,i) => {
-      html += `<div class="lb-row">
-        <span class="lb-rank ${rankClass(i)}">${rankEmoji(i)}</span>
-        <span class="lb-name">${esc(e.name)}</span>
-        <span class="lb-time">${fmt(e.time)}</span>
-        <span class="lb-feil" style="text-align:right">${e.feil} feil</span>
-      </div>`;
-    });
-    el.innerHTML = html;
-  }
-  show('scoreboardScreen');
-}
+
 
 
 // ---- PERSONAL HISTORY ----
