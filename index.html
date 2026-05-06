@@ -4,121 +4,201 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Onsdagsnøtt</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #f7f6f3; --surface: #ffffff; --border: #e2e0db;
-    --text: #1a1917; --muted: #888580; --accent: #1a1917;
-    --y-bg:#fef9e7; --y-bd:#d4a017; --y-tx:#7a5c00;
-    --g-bg:#f0f7ec; --g-bd:#4a8c3a; --g-tx:#2d5c22;
-    --b-bg:#eef4fb; --b-bd:#2b6cb0; --b-tx:#1a4a7a;
-    --p-bg:#f3f0fe; --p-bd:#6b46c1; --p-tx:#44267a;
-    --r: 6px; --font:'DM Sans',sans-serif; --mono:'DM Mono',monospace;
+    --bg: #ffffff;
+    --border: #dfdfdf;
+    --text: #1a1a1a;
+    --muted: #787878;
+    --accent: #1a1a1a;
+    --tile-bg: #efefe6;
+    --tile-hover: #deded4;
+    --tile-sel: #5a594e;
+    --y: #f9df6d; --g: #a0c35a; --b: #b0c4ef; --p: #ba81c5;
+    --r: 8px;
+    --font: 'Karla', sans-serif;
+    --mono: 'DM Mono', monospace;
   }
-  @media (prefers-color-scheme:dark) {
-    :root {
-      --bg:#111110; --surface:#1c1c1a; --border:#2e2e2b;
-      --text:#e8e6e1; --muted:#666360; --accent:#e8e6e1;
-      --y-bg:#2a2200; --y-bd:#c9a227; --y-tx:#f0c040;
-      --g-bg:#0d1f08; --g-bd:#3b7a2e; --g-tx:#7ec86e;
-      --b-bg:#071525; --b-bd:#2b6cb0; --b-tx:#7ab8f5;
-      --p-bg:#130d28; --p-bd:#6b46c1; --p-tx:#b794f4;
-    }
-  }
-  body { background:var(--bg); color:var(--text); font-family:var(--font); min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:3rem 1rem 4rem; }
-  .screen { display:none; width:100%; max-width:560px; }
+
+  body { background:var(--bg); color:var(--text); font-family:var(--font); min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:0 1.5rem 5rem; }
+
+  /* TOP BAR */
+  .topbar { width:100%; max-width:600px; display:flex; align-items:center; justify-content:center; padding:1.5rem 0 1.2rem; border-bottom:1px solid var(--border); margin-bottom:2rem; position:relative; }
+  .topbar h1 { font-size:22px; font-weight:800; letter-spacing:.02em; text-transform:uppercase; }
+  .topbar .brain { font-size:20px; margin-right:8px; }
+
+  .screen { display:none; width:100%; max-width:580px; }
   .screen.active { display:block; }
 
   /* LOGIN */
-  #loginScreen { text-align:center; padding-top:4rem; }
-  #loginScreen h1 { font-size:32px; font-weight:500; letter-spacing:-.02em; margin-bottom:6px; }
-  #loginScreen p { font-size:17px; color:var(--muted); margin-bottom:2.5rem; }
-  .input-row { display:flex; gap:8px; max-width:340px; margin:0 auto 1rem; }
-  input[type=text] { flex:1; padding:12px 16px; border-radius:var(--r); border:1px solid var(--border); background:var(--surface); color:var(--text); font-family:var(--font); font-size:17px; outline:none; transition:border-color .15s; }
+  #loginScreen { text-align:center; padding-top:3rem; }
+  #loginScreen .sub { font-size:19px; font-weight:700; margin-bottom:6px; }
+  #loginScreen p { font-size:15px; color:var(--muted); margin-bottom:2.5rem; line-height:1.5; }
+  .input-row { display:flex; gap:8px; max-width:360px; margin:0 auto 1rem; }
+  input[type=text] { flex:1; padding:12px 16px; border-radius:999px; border:2px solid var(--border); background:#fff; color:var(--text); font-family:var(--font); font-size:16px; outline:none; transition:border-color .15s; }
   input[type=text]:focus { border-color:var(--accent); }
-  .btn { padding:13px 24px; border-radius:var(--r); border:1px solid var(--accent); background:var(--accent); color:var(--bg); font-family:var(--font); font-size:16px; font-weight:500; cursor:pointer; transition:opacity .15s; white-space:nowrap; }
-  .btn:hover { opacity:.85; }
-  .btn:disabled { opacity:.4; cursor:not-allowed; }
-  .btn.ghost { background:transparent; color:var(--text); border-color:var(--border); }
-  .btn.ghost:hover { background:var(--surface); }
-  .err { font-size:14px; color:#c0392b; margin-top:10px; min-height:18px; }
-  .divider { display:flex; align-items:center; gap:12px; max-width:340px; margin:1.5rem auto; color:var(--muted); font-size:13px; }
+  .btn { padding:12px 24px; border-radius:999px; border:2px solid var(--accent); background:var(--accent); color:#fff; font-family:var(--font); font-size:15px; font-weight:700; cursor:pointer; transition:opacity .15s; white-space:nowrap; }
+  .btn:hover { opacity:.8; }
+  .btn:disabled { opacity:.35; cursor:not-allowed; }
+  .btn.ghost { background:transparent; color:var(--accent); }
+  .btn.ghost:hover { background:#f5f5f5; }
+  .err { font-size:13px; color:#d0021b; margin-top:8px; min-height:18px; }
+  .divider { display:flex; align-items:center; gap:12px; max-width:360px; margin:1.2rem auto; color:var(--muted); font-size:13px; }
   .divider::before, .divider::after { content:''; flex:1; height:1px; background:var(--border); }
-  .archive-btn { display:block; max-width:340px; margin:0 auto; padding:12px; border-radius:var(--r); border:1px solid var(--border); background:transparent; color:var(--muted); font-family:var(--font); font-size:15px; cursor:pointer; transition:all .15s; text-align:center; }
-  .archive-btn:hover { border-color:var(--accent); color:var(--text); background:var(--surface); }
+  .archive-btn { display:block; max-width:360px; margin:0 auto; padding:12px; border-radius:999px; border:2px solid var(--border); background:transparent; color:var(--muted); font-family:var(--font); font-size:15px; font-weight:600; cursor:pointer; transition:all .15s; text-align:center; }
+  .archive-btn:hover { border-color:var(--accent); color:var(--text); }
 
   /* ARCHIVE */
-  #archiveScreen { padding-top:2rem; }
-  #archiveScreen h2 { font-size:22px; font-weight:500; margin-bottom:6px; }
-  #archiveScreen p { font-size:14px; color:var(--muted); margin-bottom:1.8rem; }
+  #archiveScreen { padding-top:1rem; }
+  #archiveScreen h2 { font-size:22px; font-weight:800; margin-bottom:6px; }
+  #archiveScreen .arch-sub { font-size:14px; color:var(--muted); margin-bottom:2rem; }
   .archive-list { display:flex; flex-direction:column; gap:8px; margin-bottom:2rem; }
-  .archive-item { padding:14px 16px; border-radius:var(--r); border:1px solid var(--border); background:var(--surface); cursor:pointer; transition:all .15s; display:flex; justify-content:space-between; align-items:center; }
-  .archive-item:hover { border-color:var(--accent); }
-  .archive-item .a-title { font-size:15px; font-weight:500; }
+  .archive-item { padding:16px 18px; border-radius:var(--r); border:1px solid var(--border); cursor:pointer; transition:all .15s; display:flex; justify-content:space-between; align-items:center; }
+  .archive-item:hover { background:#fafafa; border-color:#bbb; }
+  .archive-item .a-title { font-size:16px; font-weight:700; }
   .archive-item .a-sub { font-size:13px; color:var(--muted); margin-top:2px; }
-  .archive-item .a-arrow { color:var(--muted); font-size:18px; }
-  .back-btn { font-size:14px; color:var(--muted); background:none; border:none; cursor:pointer; padding:0; text-decoration:underline; margin-bottom:1.5rem; display:inline-block; font-family:var(--font); }
+  .archive-item .a-arrow { color:var(--muted); font-size:22px; }
+  .back-btn { font-size:14px; color:var(--muted); background:none; border:none; cursor:pointer; padding:0 0 1rem; text-decoration:underline; display:inline-block; font-family:var(--font); }
 
   /* DONE */
-  #doneScreen { text-align:center; padding-top:5rem; }
-  #doneScreen h2 { font-size:24px; font-weight:500; margin-bottom:8px; }
+  #doneScreen { text-align:center; padding-top:3rem; }
+  #doneScreen h2 { font-size:26px; font-weight:800; margin-bottom:8px; }
   #doneScreen p { font-size:16px; color:var(--muted); margin-bottom:2rem; }
 
   /* GAME */
-  .game-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.8rem; }
-  .game-title { font-size:19px; font-weight:500; }
-  .timer { font-family:var(--mono); font-size:19px; color:var(--muted); letter-spacing:.05em; }
-  .archive-badge { font-size:12px; background:var(--border); color:var(--muted); padding:3px 8px; border-radius:20px; }
-  .mistakes { display:flex; align-items:center; gap:8px; margin-bottom:1.2rem; }
-  .mistakes span { font-size:16px; color:var(--muted); }
-  .dot { width:14px; height:14px; border-radius:50%; background:var(--text); transition:all .3s; }
-  .dot.used { background:var(--border); transform:scale(.75); }
-  .solved-area { display:flex; flex-direction:column; gap:6px; margin-bottom:6px; }
-  .solved-card { border-radius:var(--r); padding:12px 16px; animation:fadeUp .3s ease forwards; }
-  .solved-card .s-label { font-size:13px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; margin-bottom:2px; }
-  .solved-card .s-cat { font-size:16px; font-weight:500; }
-  .solved-card .s-words { font-size:14px; margin-top:2px; opacity:.75; }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:12px; }
-  .tile { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:20px 8px; text-align:center; font-size:20px; font-weight:700; cursor:pointer; user-select:none; transition:border-color .12s,background .12s,transform .1s; min-height:120px; display:flex; align-items:center; justify-content:center; line-height:1.3; color:var(--text); }
-  .tile:hover { border-color:var(--accent); }
-  .tile.selected { border:1.5px solid var(--accent); background:var(--bg); transform:translateY(-2px); }
+  .game-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:1.2rem; border-bottom:1px solid var(--border); margin-bottom:1.8rem; }
+  .game-title { font-size:16px; font-weight:700; color:var(--muted); }
+  .timer { font-family:var(--mono); font-size:18px; font-weight:500; }
+  .archive-badge { font-size:11px; background:#f0f0f0; color:var(--muted); padding:3px 8px; border-radius:20px; font-weight:600; margin-left:6px; }
+
+  .mistakes { display:flex; align-items:center; gap:8px; margin-bottom:1.4rem; justify-content:center; }
+  .mistakes span { font-size:15px; color:var(--muted); font-weight:600; }
+
+  /* Solved cards */
+  .solved-area { display:flex; flex-direction:column; gap:8px; margin-bottom:8px; }
+  .solved-card { border-radius:var(--r); padding:4px 16px; animation:popIn .35s ease forwards; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:72px; }
+  .solved-card .s-label { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:2px; color:rgba(0,0,0,0.5); }
+  .solved-card .s-cat { font-size:18px; font-weight:800; color:#1a1a1a; text-align:center; }
+  .solved-card .s-words { font-size:13px; margin-top:3px; color:rgba(0,0,0,0.55); text-align:center; font-weight:500; }
+  @keyframes popIn { 0%{opacity:0;transform:scale(.95)} 60%{transform:scale(1.02)} 100%{opacity:1;transform:scale(1)} }
+
+  /* Grid */
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
+  .tile {
+    background:var(--tile-bg);
+    border:none;
+    border-radius:var(--r);
+    padding:18px 4px;
+    text-align:center;
+    font-size:17px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.02em;
+    cursor:pointer;
+    user-select:none;
+    transition:background .1s, transform .1s;
+    min-height:90px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    line-height:1.2;
+    color:var(--text);
+  }
+  .tile:hover { background:var(--tile-hover); }
+  .tile.selected { background:var(--tile-sel); color:#ffffff; transform:scale(1.04); }
   .tile.shake { animation:shake .4s ease; }
-  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
-  .msg { font-size:16px; color:var(--muted); text-align:center; min-height:20px; margin-bottom:10px; }
-  .game-controls { display:flex; gap:8px; justify-content:center; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  .msg { font-size:15px; color:var(--muted); text-align:center; min-height:24px; margin-bottom:16px; font-weight:600; }
+  .game-controls { display:flex; gap:10px; justify-content:center; }
 
   /* RESULT */
-  #resultScreen { text-align:center; padding-top:3rem; }
-  #resultScreen h2 { font-size:28px; font-weight:500; margin-bottom:6px; }
-  .result-sub { font-size:17px; color:var(--muted); margin-bottom:2rem; }
-  .stat-row { display:flex; justify-content:center; gap:2.5rem; margin-bottom:2.5rem; }
-  .stat-val { font-family:var(--mono); font-size:36px; font-weight:500; }
-  .stat-label { font-size:13px; color:var(--muted); margin-top:2px; }
-  .lb-title { font-size:12px; font-weight:500; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px; }
-  table.lb { width:100%; border-collapse:collapse; }
-  table.lb td { padding:12px 4px; font-size:15px; border-bottom:1px solid var(--border); }
-  table.lb tr:last-child td { border-bottom:none; }
-  .rank { color:var(--muted); font-family:var(--mono); width:28px; }
-  .lname { font-weight:500; text-align:left; }
-  .ltime { font-family:var(--mono); text-align:right; }
-  .lfeil { color:var(--muted); font-size:13px; text-align:right; padding-left:12px; }
-  tr.me td { color:var(--accent); font-weight:500; }
-  .play-again-btn { margin-top:1.5rem; display:inline-block; font-size:14px; color:var(--muted); background:none; border:none; cursor:pointer; text-decoration:underline; font-family:var(--font); }
+  #resultScreen { padding-top:3rem; }
+  #resultScreen h2 { font-size:26px; font-weight:800; margin-bottom:4px; text-align:center; }
+  .result-sub { font-size:15px; color:var(--muted); margin-bottom:2rem; font-weight:500; text-align:center; }
+  
+  .stat-row { display:flex; justify-content:center; gap:0; margin-bottom:2.5rem; border:1.5px solid var(--border); border-radius:var(--r); overflow:hidden; }
+  .stat { flex:1; padding:1.4rem 0.5rem; text-align:center; border-right:1px solid var(--border); }
+  .stat:last-child { border-right:none; }
+  .stat-val { font-family:var(--mono); font-size:30px; font-weight:700; }
+  .stat-label { font-size:11px; color:var(--muted); margin-top:3px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; }
+
+  .lb-title { font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; margin-bottom:0; }
+  .lb-wrap { border:1.5px solid var(--border); border-radius:var(--r); overflow:hidden; margin-bottom:2rem; }
+  .lb-head { display:grid; grid-template-columns:36px 1fr 80px 60px; padding:8px 14px; background:#f9f9f9; border-bottom:1px solid var(--border); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+  .lb-row { display:grid; grid-template-columns:36px 1fr 80px 60px; padding:15px 14px; border-bottom:1px solid var(--border); font-size:14px; align-items:center; transition:background .1s; }
+  .lb-row:last-child { border-bottom:none; }
+  .lb-row:hover { background:#fafafa; }
+  .lb-row.me { background:#fffbea; font-weight:700; }
+  .lb-row.me .lb-rank { color:var(--accent); }
+  .lb-rank { font-family:var(--mono); font-size:13px; color:var(--muted); }
+  .lb-rank.top1 { color:#c9a227; font-weight:800; }
+  .lb-rank.top2 { color:#888; font-weight:800; }
+  .lb-rank.top3 { color:#a0673a; font-weight:800; }
+  .lb-name { font-weight:600; }
+  .lb-time { font-family:var(--mono); font-size:13px; color:var(--muted); }
+  .lb-feil { font-size:13px; color:var(--muted); text-align:right; }
+  .play-again-btn { display:block; text-align:center; font-size:14px; color:var(--muted); background:none; border:none; cursor:pointer; text-decoration:underline; font-family:var(--font); margin-top:0.5rem; }
+
+  /* ADMIN */
+  #adminOverlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center; }
+  #adminOverlay.open { display:flex; }
+  #adminBox { background:#fff; border-radius:12px; padding:2rem; width:100%; max-width:660px; max-height:90vh; overflow-y:auto; position:relative; }
+  #adminBox h2 { font-size:20px; font-weight:800; margin-bottom:4px; }
+  #adminBox .admin-sub { font-size:13px; color:var(--muted); margin-bottom:2rem; }
+  .admin-close { position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:22px; cursor:pointer; color:var(--muted); }
+  .admin-section { margin-bottom:2rem; }
+  .admin-section label { display:block; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:6px; }
+  .admin-section input[type=text], .admin-section input[type=password] { width:100%; padding:10px 14px; border-radius:var(--r); border:1.5px solid var(--border); font-family:var(--font); font-size:15px; outline:none; transition:border-color .15s; box-sizing:border-box; }
+  .admin-section input:focus { border-color:var(--accent); }
+  .group-row { display:grid; grid-template-columns:200px 1fr; gap:8px; margin-bottom:8px; }
+  .group-row input { padding:9px 12px; border-radius:var(--r); border:1.5px solid var(--border); font-family:var(--font); font-size:14px; outline:none; width:100%; box-sizing:border-box; }
+  .group-row input:focus { border-color:var(--accent); }
+  .group-label-row { display:flex; align-items:center; gap:8px; margin-bottom:4px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; }
+  .color-dot { width:12px; height:12px; border-radius:3px; flex-shrink:0; }
+  .admin-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:1rem; }
+  .admin-err { font-size:13px; color:#d0021b; margin-top:6px; min-height:16px; }
+  #codeOutput { width:100%; font-family:var(--mono); font-size:11px; padding:12px; border-radius:var(--r); border:1.5px solid var(--border); background:#f9f9f9; min-height:100px; resize:vertical; outline:none; box-sizing:border-box; }
+  .copy-success { font-size:13px; color:#2d6a1f; margin-top:6px; min-height:16px; font-weight:600; }
+  /* SUMMARY */
+  #summaryScreen { text-align:center; padding-top:3.5rem; }
+  #summaryScreen h2 { font-size:28px; font-weight:800; margin-bottom:6px; }
+  .summary-sub { font-size:16px; color:var(--muted); margin-bottom:2rem; font-weight:500; }
+  .emoji-grid { display:flex; flex-direction:column; gap:6px; align-items:center; margin-bottom:2.5rem; }
+  .emoji-row { display:flex; gap:4px; }
+  .emoji-row span { font-size:28px; }
+  .summary-groups { display:flex; flex-direction:column; gap:8px; margin-bottom:2.5rem; text-align:left; }
+  .summary-card { border-radius:var(--r); padding:14px 18px; }
+  .summary-card .sc-label { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:rgba(0,0,0,0.5); margin-bottom:2px; }
+  .summary-card .sc-cat { font-size:17px; font-weight:800; color:#1a1a1a; }
+  .summary-card .sc-words { font-size:13px; color:rgba(0,0,0,0.55); margin-top:3px; font-weight:500; }
+
+  #previewSection { margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); }
+  #previewSection h3 { font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:10px; }
+  .preview-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:10px; }
+  .preview-tile { background:var(--tile-bg); border-radius:6px; padding:10px 4px; text-align:center; font-size:12px; font-weight:800; text-transform:uppercase; min-height:48px; display:flex; align-items:center; justify-content:center; line-height:1.2; }
+  .preview-card { border-radius:6px; padding:8px 14px; margin-bottom:6px; }
+  .preview-card .pc-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:rgba(0,0,0,0.5); }
+  .preview-card .pc-cat { font-size:14px; font-weight:800; }
+  .preview-card .pc-words { font-size:11px; color:rgba(0,0,0,0.55); margin-top:2px; }
 </style>
 </head>
 <body>
 
+<div class="topbar">
+  <span class="brain" ondblclick="openAdmin()" style="cursor:pointer;user-select:none">🧠</span>
+  <h1>Onsdagsnøtt</h1>
+</div>
+
 <!-- LOGIN -->
 <div id="loginScreen" class="screen active">
-  <h1>Onsdagsnøtt 🧠</h1>
-  <p>Skriv inn brukernavnet ditt for å starte.<br>Du kan bare spille ukens nøtt én gang.</p>
-  <div class="input-row">
-    <input type="text" id="nameInput" placeholder="Brukernavn" maxlength="20" autocomplete="off" />
+  <div class="sub">Finn de fire gruppene</div>
+  <p>Sorter 16 ord inn i 4 skjulte kategorier.<br>Del resultatet ditt i Teams når du er ferdig!</p>
+  <div style="margin-bottom:1.5rem">
     <button class="btn" id="startBtn" onclick="startGame()">Start</button>
   </div>
-  <div class="err" id="loginErr"></div>
   <div class="divider">eller</div>
   <button class="archive-btn" onclick="show('archiveScreen')">📂 Se tidligere nøtter</button>
 </div>
@@ -127,25 +207,19 @@
 <div id="archiveScreen" class="screen">
   <button class="back-btn" onclick="show('loginScreen')">← Tilbake</button>
   <h2>Tidligere nøtter</h2>
-  <p>Spill gamle nøtter for moro skyld — teller ikke på scoreboardet.</p>
+  <p class="arch-sub">Spill gamle nøtter for moro skyld — teller ikke på scoreboardet.</p>
   <div class="archive-list" id="archiveList"></div>
 </div>
 
-<!-- ALREADY PLAYED -->
-<div id="doneScreen" class="screen">
-  <h2>Du har allerede spilt!</h2>
-  <p>Én spilling per nettleser. Kom tilbake neste uke. 😄</p>
-  <div id="doneBoard" style="margin-top:1.5rem"></div>
-  <button class="archive-btn" style="margin-top:1.5rem" onclick="show('archiveScreen')">📂 Se tidligere nøtter</button>
-</div>
+
 
 <!-- GAME -->
 <div id="gameScreen" class="screen">
   <div class="game-header">
-    <span class="game-title" id="playerLabel"></span>
+    <span class="game-title">Onsdagsnøtt 🧠</span>
     <span class="timer" id="timerEl">00:00</span>
   </div>
-  <div class="mistakes"><span>Feil igjen:</span><div class="dot" id="d1"></div><div class="dot" id="d2"></div><div class="dot" id="d3"></div><div class="dot" id="d4"></div></div>
+  <div class="mistakes"><span id="feilTeller">Feil: 0</span></div>
   <div class="solved-area" id="solvedArea"></div>
   <div class="grid" id="grid"></div>
   <div class="msg" id="msg"></div>
@@ -156,30 +230,40 @@
   </div>
 </div>
 
+
+<!-- SUMMARY -->
+<div id="summaryScreen" class="screen">
+  <h2 id="summaryTitle"></h2>
+  <p class="summary-sub" id="summarySub"></p>
+  <div class="emoji-grid" id="emojiGrid"></div>
+  <div class="summary-groups" id="summaryGroups"></div>
+  <button class="btn" onclick="showResult()">Se resultatlisten →</button>
+</div>
+
 <!-- RESULT -->
 <div id="resultScreen" class="screen">
   <h2 id="resultTitle"></h2>
   <p class="result-sub" id="resultSub"></p>
-  <div class="stat-row" id="statRow">
-    <div class="stat"><div class="stat-val" id="rTime">—</div><div class="stat-label">tid</div></div>
-    <div class="stat"><div class="stat-val" id="rFeil">—</div><div class="stat-label">feil</div></div>
-    <div class="stat"><div class="stat-val" id="rRank">—</div><div class="stat-label">plass</div></div>
+  <div class="stat-row">
+    <div class="stat"><div class="stat-val" id="rTime">—</div><div class="stat-label">Tid</div></div>
+    <div class="stat"><div class="stat-val" id="rFeil">—</div><div class="stat-label">Feil</div></div>
   </div>
-  <div class="lb-title" id="lbTitle">Resultatliste</div>
-  <div id="leaderboard"></div>
+  <button class="btn" onclick="copyResult()" style="margin-bottom:1rem">📋 Kopier resultat</button>
+  <div class="copy-success" id="copyResultMsg"></div>
+  <button class="play-again-btn" onclick="location.reload()">🔄 Spill igjen</button>
+  <br>
   <button class="play-again-btn" onclick="show('archiveScreen')">📂 Spill en gammel nøtt</button>
 </div>
 
 <script>
-// ---- PUZZLES ----
 const ACTIVE_PUZZLE = {
-  id: 'nott_2025w19b',
+  id: 'nott_2025w19e',
   title: 'Ukens nøtt',
   groups: [
-    {bg:'var(--y-bg)',bd:'var(--y-bd)',tx:'var(--y-tx)',label:'Lett',      cat:'Slang for penger',              words:['GRYN','SPENN','LAPPER','DALER']},
-    {bg:'var(--g-bg)',bd:'var(--g-bd)',tx:'var(--g-tx)',label:'Medium',    cat:'Pizzakjeder i Norge',           words:['PEPPES','PIZZABAKEREN','DOMINOS','EGON']},
-    {bg:'var(--b-bg)',bd:'var(--b-bd)',tx:'var(--b-tx)',label:'Vanskelig', cat:'Kjente dyr med egennavn',       words:['HARAMBE','JULIUS','LASSIE','DOLLY']},
-    {bg:'var(--p-bg)',bd:'var(--p-bd)',tx:'var(--p-tx)',label:'Djevelsk',  cat:'Alle heter Donald til fornavn', words:['TRUMP','DUCK','GLOVER','SUTHERLAND']},
+    {bg:'#f9df6d', label:'Lett',      cat:'Slang for penger',              words:['GRYN','SPENN','LAPPER','DALER']},
+    {bg:'#a0c35a', label:'Medium',    cat:'Pizzakjeder i Norge',           words:['PEPPES','PIZZABAKEREN','DOMINOS','EGON']},
+    {bg:'#b0c4ef', label:'Vanskelig', cat:'Kjente dyr med egennavn',       words:['HARAMBE','JULIUS','LASSIE','DOLLY']},
+    {bg:'#ba81c5', label:'Djevelsk',  cat:'Alle heter Donald til fornavn', words:['TRUMP','DUCK','GLOVER','SUTHERLAND']},
   ]
 };
 
@@ -189,15 +273,14 @@ const ARCHIVE = [
     title: 'Uke 18',
     subtitle: 'Dyr gjemt i ord · Norske kommuner',
     groups: [
-      {bg:'var(--y-bg)',bd:'var(--y-bd)',tx:'var(--y-tx)',label:'Lett',      cat:'Kan stå foran "-tur"',           words:['SPASER','FJELL','KVELD','LUFTE']},
-      {bg:'var(--g-bg)',bd:'var(--g-bd)',tx:'var(--g-tx)',label:'Medium',    cat:'Ord for å sovne',                words:['DUPPE AV','NIKKE','DABBE AV','SLUMRE']},
-      {bg:'var(--b-bg)',bd:'var(--b-bd)',tx:'var(--b-tx)',label:'Vanskelig', cat:'Også en norsk kommune',          words:['MOSS','SAND','TØNNE','TINN']},
-      {bg:'var(--p-bg)',bd:'var(--p-bd)',tx:'var(--p-tx)',label:'Djevelsk',  cat:'Inneholder et skjult norsk dyr', words:['TAPET','GULVET','BREVET','FORMEL']},
+      {bg:'#f9df6d', label:'Lett',      cat:'Kan stå foran "-tur"',           words:['SPASER','FJELL','KVELD','LUFTE']},
+      {bg:'#a0c35a', label:'Medium',    cat:'Ord for å sovne',                words:['DUPPE AV','NIKKE','DABBE AV','SLUMRE']},
+      {bg:'#b0c4ef', label:'Vanskelig', cat:'Også en norsk kommune',          words:['MOSS','SAND','TØNNE','TINN']},
+      {bg:'#ba81c5', label:'Djevelsk',  cat:'Inneholder et skjult norsk dyr', words:['TAPET','GULVET','BREVET','FORMEL']},
     ]
   }
 ];
 
-// ---- STATE ----
 const LS_PLAYED = ACTIVE_PUZZLE.id + '_played';
 const LS_NAME   = ACTIVE_PUZZLE.id + '_name';
 const LB_KEY    = ACTIVE_PUZZLE.id + '_lb';
@@ -207,124 +290,74 @@ let currentPuzzle = null;
 let isArchiveMode = false;
 let tiles = [];
 let selected = [];
-let mistakes = 4;
+let mistakes = 0;
 let solved = [];
 let elapsed = 0;
 let timerInterval = null;
 let myTs = null;
+let guessHistory = [];
 
-// ---- STORAGE ----
-async function lbGet() {
-  try { const r = await window.storage.get(LB_KEY, true); return r ? JSON.parse(r.value) : []; } catch { return []; }
-}
-async function lbSet(data) {
-  try { await window.storage.set(LB_KEY, JSON.stringify(data), true); } catch {}
-}
 
-// ---- SCREENS ----
+
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-// ---- ON LOAD ----
 window.addEventListener('load', () => {
   renderArchiveList();
-  if (localStorage.getItem(LS_PLAYED)) {
-    playerName = localStorage.getItem(LS_NAME) || '';
-    show('doneScreen');
-    renderDoneBoard();
-  }
 });
 
 document.getElementById('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') startGame(); });
 
-// ---- ARCHIVE LIST ----
 function renderArchiveList() {
-  const el = document.getElementById('archiveList');
-  el.innerHTML = '';
+  const el = document.getElementById('archiveList'); el.innerHTML = '';
   ARCHIVE.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'archive-item';
+    const div = document.createElement('div'); div.className = 'archive-item';
     div.innerHTML = `<div><div class="a-title">${p.title}</div><div class="a-sub">${p.subtitle}</div></div><div class="a-arrow">›</div>`;
     div.onclick = () => startArchiveGame(p);
     el.appendChild(div);
   });
 }
 
-// ---- START ACTIVE GAME ----
-async function startGame() {
-  const name = document.getElementById('nameInput').value.trim();
-  if (!name) { document.getElementById('loginErr').textContent = 'Skriv inn et brukernavn.'; return; }
-
-  if (localStorage.getItem(LS_PLAYED)) {
-    playerName = localStorage.getItem(LS_NAME) || name;
-    show('doneScreen');
-    renderDoneBoard();
-    return;
-  }
-
-  playerName = name;
-  document.getElementById('loginErr').textContent = '';
+function startGame() {
   document.getElementById('startBtn').disabled = true;
-  document.getElementById('playerLabel').textContent = name;
-
   isArchiveMode = false;
   loadPuzzle(ACTIVE_PUZZLE.groups);
   show('gameScreen');
-
-  timerInterval = setInterval(() => {
-    elapsed++;
-    document.getElementById('timerEl').textContent = fmt(elapsed);
-  }, 1000);
+  timerInterval = setInterval(() => { elapsed++; document.getElementById('timerEl').textContent = fmt(elapsed); }, 1000);
 }
 
-// ---- START ARCHIVE GAME ----
 function startArchiveGame(puzzle) {
   isArchiveMode = true;
   playerName = '';
-  document.getElementById('playerLabel').innerHTML = `${puzzle.title} <span class="archive-badge">Arkiv</span>`;
+  document.getElementById('playerLabel').innerHTML = `${puzzle.title}<span class="archive-badge">Arkiv</span>`;
   document.getElementById('timerEl').textContent = '00:00';
   loadPuzzle(puzzle.groups);
   show('gameScreen');
-
-  timerInterval = setInterval(() => {
-    elapsed++;
-    document.getElementById('timerEl').textContent = fmt(elapsed);
-  }, 1000);
+  timerInterval = setInterval(() => { elapsed++; document.getElementById('timerEl').textContent = fmt(elapsed); }, 1000);
 }
 
-// ---- LOAD PUZZLE ----
 function loadPuzzle(groups) {
   currentPuzzle = groups;
   tiles = [...groups.flatMap(g => g.words)];
-  selected = [];
-  mistakes = 4;
-  solved = [];
-  elapsed = 0;
-  myTs = null;
+  selected = []; mistakes = 0; solved = []; elapsed = 0; myTs = null;
   clearInterval(timerInterval);
-
-  // Reset dots
-  for (let i = 1; i <= 4; i++) document.getElementById('d'+i).classList.remove('used');
+  document.getElementById('feilTeller').textContent = 'Feil: 0';
   document.getElementById('solvedArea').innerHTML = '';
   document.getElementById('msg').textContent = '';
   document.getElementById('guessBtn').disabled = true;
-
   doShuffle();
 }
 
-// ---- TIMER ----
-function fmt(s) { return String(Math.floor(s / 60)).padStart(2,'0') + ':' + String(s % 60).padStart(2,'0'); }
+function fmt(s) { return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); }
 
-// ---- GAME ----
 function renderGrid() {
   const g = document.getElementById('grid'); g.innerHTML = '';
   tiles.filter(w => !solved.includes(w)).forEach(w => {
     const d = document.createElement('div');
-    d.className = 'tile' + (selected.includes(w) ? ' selected' : '');
-    d.textContent = w;
-    d.onclick = () => toggle(w);
+    d.className = 'tile'+(selected.includes(w)?' selected':'');
+    d.textContent = w; d.onclick = () => toggle(w);
     g.appendChild(d);
   });
 }
@@ -339,10 +372,7 @@ function toggle(w) {
 function clearSel() { selected = []; renderGrid(); document.getElementById('guessBtn').disabled = true; }
 
 function doShuffle() {
-  for (let i = tiles.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
-  }
+  for (let i = tiles.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [tiles[i],tiles[j]]=[tiles[j],tiles[i]]; }
   clearSel(); renderGrid();
 }
 
@@ -350,77 +380,112 @@ function doGuess() {
   const grp = currentPuzzle.find(g => g.words.every(w => selected.includes(w)) && selected.every(w => g.words.includes(w)));
   if (grp) {
     solved.push(...grp.words); tiles = tiles.filter(w => !grp.words.includes(w));
+    guessHistory.push({correct: true, group: grp});
     showSolvedCard(grp); selected = []; renderGrid();
     document.getElementById('guessBtn').disabled = true;
-    setMsg('Riktig!');
+    setMsg('Riktig! ✓');
     if (solved.length === 16) setTimeout(finishGame, 500);
   } else {
     const oneAway = currentPuzzle.some(g => g.words.filter(w => selected.includes(w)).length === 3);
-    mistakes--; updateDots();
+    const snapSelected = [...selected];
+    guessHistory.push({correct: false, selected: snapSelected});
+    mistakes++;
+    document.getElementById('feilTeller').textContent = 'Feil: ' + mistakes;
     document.querySelectorAll('.tile.selected').forEach(t => { t.classList.add('shake'); setTimeout(() => t.classList.remove('shake'), 450); });
     setTimeout(() => clearSel(), 120);
-    if (mistakes === 0) { setMsg('Ingen forsøk igjen!'); setTimeout(finishGame, 800); }
-    else setMsg(oneAway ? 'Én unna — prøv igjen!' : 'Feil. Prøv igjen.');
+    setMsg(oneAway ? 'Én unna — prøv igjen!' : 'Feil. Prøv igjen.');
   }
 }
 
 function showSolvedCard(g) {
   const el = document.createElement('div'); el.className = 'solved-card';
-  el.style.cssText = `background:${g.bg};border:1px solid ${g.bd}`;
-  el.innerHTML = `<div class="s-label" style="color:${g.bd}">${g.label}</div><div class="s-cat" style="color:${g.tx}">${g.cat}</div><div class="s-words" style="color:${g.tx}">${g.words.join(' · ')}</div>`;
+  el.style.background = g.bg;
+  el.innerHTML = `<div class="s-label">${g.label}</div><div class="s-cat">${g.cat}</div><div class="s-words">${g.words.join(' · ')}</div>`;
   document.getElementById('solvedArea').appendChild(el);
 }
 
-function updateDots() { for (let i = 1; i <= 4; i++) { if (i > mistakes) document.getElementById('d'+i).classList.add('used'); } }
 function setMsg(t) { const el = document.getElementById('msg'); el.textContent = t; setTimeout(() => { if (el.textContent === t) el.textContent = ''; }, 2500); }
+
+const COLOR_EMOJI = {'#f9df6d':'🟡','#a0c35a':'🟢','#b0c4ef':'🔵','#ba81c5':'🟣'};
 
 async function finishGame() {
   clearInterval(timerInterval);
-  const feil = 4 - mistakes;
+  const feil = mistakes;
   const won = solved.length === 16;
 
+  // Build summary screen
+  document.getElementById('summaryTitle').textContent = won ? 'Bra jobbet! 🎉' : 'Bedre lykke neste gang';
+  document.getElementById('summarySub').textContent = won
+    ? `Du fullførte på ${fmt(elapsed)} med ${feil} feil.`
+    : `Du fikk ${solved.length/4} av 4 grupper.`;
+
+  // Emoji grid
+  const grid = document.getElementById('emojiGrid');
+  grid.innerHTML = '';
+  guessHistory.forEach(g => {
+    const row = document.createElement('div'); row.className = 'emoji-row';
+    if (g.correct) {
+      for (let i = 0; i < 4; i++) {
+        const s = document.createElement('span');
+        s.textContent = COLOR_EMOJI[g.group.bg] || '⬜';
+        row.appendChild(s);
+      }
+    } else {
+      // For wrong guesses, show which group each word belongs to
+      g.selected.forEach(w => {
+        const grp = currentPuzzle.find(gr => gr.words.includes(w));
+        const s = document.createElement('span');
+        s.textContent = grp ? (COLOR_EMOJI[grp.bg] || '⬜') : '⬜';
+        row.appendChild(s);
+      });
+    }
+    grid.appendChild(row);
+  });
+
+  // Summary groups (all 4 in order)
+  const groups = document.getElementById('summaryGroups');
+  groups.innerHTML = currentPuzzle.map(g => `
+    <div class="summary-card" style="background:${g.bg}">
+      <div class="sc-label">${g.label}</div>
+      <div class="sc-cat">${g.cat}</div>
+      <div class="sc-words">${g.words.join(' · ')}</div>
+    </div>`).join('');
+
+  // Prepare result screen in background
   document.getElementById('resultTitle').textContent = won ? 'Bra jobbet! 🎉' : 'Bedre lykke neste gang';
   document.getElementById('rTime').textContent = fmt(elapsed);
   document.getElementById('rFeil').textContent = feil;
 
-  if (isArchiveMode) {
-    // Archive mode: no scoreboard, no lock, just personal result
-    document.getElementById('rRank').textContent = '—';
-    document.getElementById('lbTitle').style.display = 'none';
-    document.getElementById('leaderboard').innerHTML = '<p style="font-size:14px;color:var(--muted);text-align:center">Arkivspilling teller ikke på scoreboardet.</p>';
-    document.getElementById('resultSub').textContent = won
-      ? `Du fullførte på ${fmt(elapsed)} med ${feil} feil.`
-      : `Du fikk ${solved.length / 4} av 4 grupper.`;
-  } else {
-    // Active mode: lock browser, save to leaderboard
-    localStorage.setItem(LS_PLAYED, '1');
-    localStorage.setItem(LS_NAME, playerName);
-    myTs = Date.now();
-    let lb = await lbGet();
-    lb.push({ name: playerName, time: elapsed, feil, ts: myTs });
-    lb.sort((a, b) => a.feil !== b.feil ? a.feil - b.feil : a.time - b.time);
-    await lbSet(lb);
-    const rank = lb.findIndex(e => e.ts === myTs) + 1;
-    document.getElementById('rRank').textContent = '#' + rank;
-    document.getElementById('lbTitle').style.display = '';
-    document.getElementById('resultSub').textContent = won
-      ? `Du fullførte på ${fmt(elapsed)} med ${feil} feil.`
-      : `Du fikk ${solved.length / 4} av 4 grupper.`;
-    renderLB(lb, myTs, 'leaderboard');
-  }
+  document.getElementById('resultSub').textContent = won
+    ? `Du fullførte på ${fmt(elapsed)} med ${feil} feil. Del resultatet i Teams! 👇`
+    : `Du fikk ${solved.length/4} av 4 grupper på ${fmt(elapsed)}.`;
 
+  show('summaryScreen');
+}
+
+function showResult() {
   show('resultScreen');
 }
 
+function rankEmoji(i) {
+  return i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i+1)+'';
+}
+function rankClass(i) {
+  return i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+}
 function renderLB(lb, ts, containerId) {
   const el = document.getElementById(containerId);
-  if (!lb.length) { el.innerHTML = '<p style="font-size:14px;color:var(--muted)">Ingen resultater ennå.</p>'; return; }
-  let html = '<table class="lb">';
-  lb.slice(0, 20).forEach((e, i) => {
+  if (!lb.length) { el.innerHTML = '<div style="padding:1rem;font-size:14px;color:var(--muted);text-align:center">Ingen resultater ennå.</div>'; return; }
+  let html = '';
+  lb.slice(0,20).forEach((e,i) => {
     const me = e.ts === ts;
-    html += `<tr${me ? ' class="me"' : ''}><td class="rank">${i+1}</td><td class="lname">${esc(e.name)}</td><td class="ltime">${fmt(e.time)}</td><td class="lfeil">${e.feil} feil</td></tr>`;
+    html += `<div class="lb-row${me?' me':''}">
+      <span class="lb-rank ${rankClass(i)}">${rankEmoji(i)}</span>
+      <span class="lb-name">${esc(e.name)}</span>
+      <span class="lb-time">${fmt(e.time)}</span>
+      <span class="lb-feil" style="text-align:right">${e.feil} feil</span>
+    </div>`;
   });
-  html += '</table>';
   el.innerHTML = html;
 }
 
@@ -429,15 +494,280 @@ async function renderDoneBoard() {
   const el = document.getElementById('doneBoard');
   if (!lb.length) { el.innerHTML = '<p style="font-size:14px;color:var(--muted)">Ingen resultater ennå.</p>'; return; }
   let html = '<div class="lb-title">Resultatliste</div><table class="lb">';
-  lb.slice(0, 20).forEach((e, i) => {
+  lb.slice(0,20).forEach((e,i) => {
     const me = e.name.toLowerCase() === playerName.toLowerCase();
-    html += `<tr${me ? ' class="me"' : ''}><td class="rank">${i+1}</td><td class="lname">${esc(e.name)}</td><td class="ltime">${fmt(e.time)}</td><td class="lfeil">${e.feil} feil</td></tr>`;
+    html += `<tr${me?' class="me"':''}><td class="rank">${i+1}</td><td class="lname">${esc(e.name)}</td><td class="ltime">${fmt(e.time)}</td><td class="lfeil">${e.feil} feil</td></tr>`;
   });
-  html += '</table>';
-  el.innerHTML = html;
+  html += '</table>'; el.innerHTML = html;
+}
+
+function copyResult() {
+  const title = document.getElementById('resultTitle').textContent;
+  const time = document.getElementById('rTime').textContent;
+  const feil = document.getElementById('rFeil').textContent;
+  const rows = document.getElementById('emojiGrid').querySelectorAll('.emoji-row');
+  let emojiStr = '';
+  rows.forEach(row => {
+    emojiStr += Array.from(row.querySelectorAll('span')).map(s => s.textContent).join('') + '\n';
+  });
+  const text = `🧠 Onsdagsnøtt\n${title}\n⏱️ ${time} | ❌ ${feil} feil\n\n${emojiStr}`;
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copyResultMsg');
+    el.textContent = '✓ Kopiert! Lim inn i Teams.';
+    setTimeout(() => el.textContent = '', 3000);
+  });
+}
+
+async function showPublicLB() {
+  const lb = await lbGet();
+  const el = document.getElementById('publicLeaderboard');
+  if (!lb.length) {
+    el.innerHTML = '<div style="padding:1rem;font-size:14px;color:var(--muted);text-align:center">Ingen har spilt ennå.</div>';
+  } else {
+    let html = '';
+    lb.slice(0,20).forEach((e,i) => {
+      html += `<div class="lb-row">
+        <span class="lb-rank ${rankClass(i)}">${rankEmoji(i)}</span>
+        <span class="lb-name">${esc(e.name)}</span>
+        <span class="lb-time">${fmt(e.time)}</span>
+        <span class="lb-feil" style="text-align:right">${e.feil} feil</span>
+      </div>`;
+    });
+    el.innerHTML = html;
+  }
+  show('scoreboardScreen');
 }
 
 function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ---- ADMIN ----
+const ADMIN_PW = 'klpnøtt2025';
+
+function openAdmin() {
+  document.getElementById('adminOverlay').classList.add('open');
+  document.getElementById('adminLogin').style.display = 'block';
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('adminPw').value = '';
+  document.getElementById('adminErr').textContent = '';
+  setTimeout(() => document.getElementById('adminPw').focus(), 100);
+}
+
+function closeAdmin() {
+  document.getElementById('adminOverlay').classList.remove('open');
+}
+
+function checkPw() {
+  const pw = document.getElementById('adminPw').value;
+  if (pw === ADMIN_PW) {
+    document.getElementById('adminLogin').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+  } else {
+    document.getElementById('adminErr').textContent = 'Feil passord.';
+  }
+}
+
+function words(id) {
+  return document.getElementById(id).value.split(',').map(w => w.trim().toUpperCase()).filter(Boolean);
+}
+
+function previewPuzzle() {
+  const groups = [
+    {bg:'#f9df6d', cat: document.getElementById('ycat').value.trim(), words: words('yw'), label:'Lett'},
+    {bg:'#a0c35a', cat: document.getElementById('gcat').value.trim(), words: words('gw'), label:'Medium'},
+    {bg:'#b0c4ef', cat: document.getElementById('bcat').value.trim(), words: words('bw'), label:'Vanskelig'},
+    {bg:'#ba81c5', cat: document.getElementById('pcat').value.trim(), words: words('pw2'), label:'Djevelsk'},
+  ];
+
+  const err = document.getElementById('genErr');
+  if (groups.some(g => g.words.length !== 4)) { err.textContent = 'Hver gruppe må ha nøyaktig 4 ord.'; return; }
+  err.textContent = '';
+
+  // Shuffle all words
+  const allWords = groups.flatMap(g => g.words).sort(() => Math.random() - 0.5);
+  const grid = document.getElementById('previewGrid');
+  grid.innerHTML = allWords.map(w => `<div class="preview-tile">${w}</div>`).join('');
+
+  const cards = document.getElementById('previewCards');
+  cards.innerHTML = groups.map(g => `
+    <div class="preview-card" style="background:${g.bg}">
+      <div class="pc-label">${g.label}</div>
+      <div class="pc-cat">${g.cat || '—'}</div>
+      <div class="pc-words">${g.words.join(' · ')}</div>
+    </div>`).join('');
+
+  document.getElementById('previewSection').style.display = 'block';
+}
+
+function generateCode() {
+  const id = document.getElementById('aId').value.trim();
+  const title = document.getElementById('aTitle').value.trim();
+  const subtitle = document.getElementById('aSubtitle').value.trim();
+  const ycat = document.getElementById('ycat').value.trim();
+  const gcat = document.getElementById('gcat').value.trim();
+  const bcat = document.getElementById('bcat').value.trim();
+  const pcat = document.getElementById('pcat').value.trim();
+  const yw = words('yw');
+  const gw = words('gw');
+  const bw = words('bw');
+  const pw = words('pw2');
+
+  const err = document.getElementById('genErr');
+  if (!id || !title || !ycat || !gcat || !bcat || !pcat) { err.textContent = 'Fyll inn alle felter.'; return; }
+  if ([yw,gw,bw,pw].some(w => w.length !== 4)) { err.textContent = 'Hver gruppe må ha nøyaktig 4 ord (kommaseparert).'; return; }
+  err.textContent = '';
+
+  const fmt = (words) => words.map(w => `'${w}'`).join(',');
+
+  const activePuzzle = `const ACTIVE_PUZZLE = {
+  id: '${id}',
+  title: 'Ukens nøtt',
+  groups: [
+    {bg:'#f9df6d', label:'Lett',      cat:'${ycat}', words:[${fmt(yw)}]},
+    {bg:'#a0c35a', label:'Medium',    cat:'${gcat}', words:[${fmt(gw)}]},
+    {bg:'#b0c4ef', label:'Vanskelig', cat:'${bcat}', words:[${fmt(bw)}]},
+    {bg:'#ba81c5', label:'Djevelsk',  cat:'${pcat}', words:[${fmt(pw)}]},
+  ]
+};`;
+
+  const archiveEntry = `  {
+    id: '${id}',
+    title: '${title}',
+    subtitle: '${subtitle}',
+    groups: [
+      {bg:'#f9df6d', label:'Lett',      cat:'${ycat}', words:[${fmt(yw)}]},
+      {bg:'#a0c35a', label:'Medium',    cat:'${gcat}', words:[${fmt(gw)}]},
+      {bg:'#b0c4ef', label:'Vanskelig', cat:'${bcat}', words:[${fmt(bw)}]},
+      {bg:'#ba81c5', label:'Djevelsk',  cat:'${pcat}', words:[${fmt(pw)}]},
+    ]
+  }`;
+
+  const output = `// ====== NY AKTIV NØTT ======
+// Erstatt ACTIVE_PUZZLE med dette:
+
+${activePuzzle}
+
+// ====== LEGG TIL I ARCHIVE ======
+// Legg dette inn øverst i ARCHIVE-arrayen:
+
+${archiveEntry},`;
+
+  document.getElementById('codeOutput').value = output;
+  document.getElementById('codeSection').style.display = 'block';
+  document.getElementById('copyMsg').textContent = '';
+}
+
+function copyCode() {
+  const el = document.getElementById('codeOutput');
+  el.select();
+  document.execCommand('copy');
+  document.getElementById('copyMsg').textContent = '✓ Kopiert!';
+  setTimeout(() => document.getElementById('copyMsg').textContent = '', 2500);
+}
+
+function clearAdmin() {
+  ['aId','aTitle','aSubtitle','ycat','yw','gcat','gw','bcat','bw','pcat','pw2'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('codeSection').style.display = 'none';
+  document.getElementById('genErr').textContent = '';
+}
+
+// Close on backdrop click
+window.addEventListener('load', function() {
+  document.getElementById('adminOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeAdmin();
+  });
+});
+
 </script>
+
+<!-- ADMIN OVERLAY -->
+<div id="adminOverlay">
+  <div id="adminBox">
+    <button class="admin-close" onclick="closeAdmin()">✕</button>
+    <h2>Admin 🔐</h2>
+    <p class="admin-sub">Dobbeltklikk på hjernen for å åpne dette panelet.</p>
+
+    <!-- PASSWORD -->
+    <div id="adminLogin">
+      <div class="admin-section">
+        <label>Passord</label>
+        <input type="password" id="adminPw" placeholder="Skriv inn passord" onkeydown="if(event.key==='Enter')checkPw()" />
+        <div class="admin-err" id="adminErr"></div>
+      </div>
+      <button class="btn" onclick="checkPw()">Logg inn</button>
+    </div>
+
+    <!-- GENERATOR -->
+    <div id="adminPanel" style="display:none">
+      <div class="admin-section">
+        <label>Uke-ID (unik per nøtt, f.eks. nott_2025w20)</label>
+        <input type="text" id="aId" placeholder="nott_2025w20" />
+      </div>
+      <div class="admin-section">
+        <label>Uketittel for arkivet (f.eks. Uke 20)</label>
+        <input type="text" id="aTitle" placeholder="Uke 20" />
+      </div>
+      <div class="admin-section">
+        <label>Arkiv-undertittel (hint om innholdet)</label>
+        <input type="text" id="aSubtitle" placeholder="Donald · Pizzakjeder · ..." />
+      </div>
+
+      <div class="admin-section">
+        <div class="group-label-row"><div class="color-dot" style="background:#f9df6d"></div>Gul — Lett</div>
+        <div class="group-row">
+          <input type="text" id="ycat" placeholder="Kategorinavn" />
+          <input type="text" id="yw" placeholder="ORD1, ORD2, ORD3, ORD4" />
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <div class="group-label-row"><div class="color-dot" style="background:#a0c35a"></div>Grønn — Medium</div>
+        <div class="group-row">
+          <input type="text" id="gcat" placeholder="Kategorinavn" />
+          <input type="text" id="gw" placeholder="ORD1, ORD2, ORD3, ORD4" />
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <div class="group-label-row"><div class="color-dot" style="background:#b0c4ef"></div>Blå — Vanskelig</div>
+        <div class="group-row">
+          <input type="text" id="bcat" placeholder="Kategorinavn" />
+          <input type="text" id="bw" placeholder="ORD1, ORD2, ORD3, ORD4" />
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <div class="group-label-row"><div class="color-dot" style="background:#ba81c5"></div>Lilla — Djevelsk</div>
+        <div class="group-row">
+          <input type="text" id="pcat" placeholder="Kategorinavn" />
+          <input type="text" id="pw2" placeholder="ORD1, ORD2, ORD3, ORD4" />
+        </div>
+      </div>
+
+      <div class="admin-actions">
+        <button class="btn ghost" onclick="previewPuzzle()">Forhåndsvisning</button>
+        <button class="btn" onclick="generateCode()">Generer kode</button>
+        <button class="btn ghost" onclick="clearAdmin()">Tøm</button>
+      </div>
+      <div id="previewSection" style="display:none">
+        <h3>Forhåndsvisning</h3>
+        <div class="preview-grid" id="previewGrid"></div>
+        <div id="previewCards"></div>
+      </div>
+      <div class="admin-err" id="genErr"></div>
+
+      <div id="codeSection" style="display:none;margin-top:1.5rem">
+        <div class="admin-section">
+          <label>Generert kode — erstatt ACTIVE_PUZZLE og legg gammel nøtt i ARCHIVE</label>
+          <textarea id="codeOutput" readonly></textarea>
+        </div>
+        <button class="btn ghost" onclick="copyCode()">Kopier kode</button>
+        <div class="copy-success" id="copyMsg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
