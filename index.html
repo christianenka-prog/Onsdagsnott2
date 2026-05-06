@@ -268,7 +268,6 @@
   <br>
   <button class="play-again-btn" onclick="show('archiveScreen')">📂 Spill en gammel nøtt</button>
 
-  <div class="history-section" id="historySection"></div>
 </div>
 
 <script>
@@ -435,9 +434,6 @@ async function finishGame() {
   clearInterval(timerInterval);
   const feil = mistakes;
   const won = solved.length === 16;
-  const puzzleTitle = isArchiveMode ? 'Arkiv' : 'Ukens nøtt';
-  const puzzleId = isArchiveMode ? 'archive' : ACTIVE_PUZZLE.id;
-  saveToHistory(puzzleId, puzzleTitle, elapsed, feil, won);
 
   // Build summary screen
   document.getElementById('summaryTitle').textContent = won ? 'Bra jobbet! 🎉' : 'Bedre lykke neste gang';
@@ -486,13 +482,10 @@ async function finishGame() {
     ? `Du fullførte på ${fmt(elapsed)} med ${feil} feil. Del resultatet i Teams! 👇`
     : `Du fikk ${solved.length/4} av 4 grupper på ${fmt(elapsed)}.`;
 
-  // Pre-render history for result screen
-  renderHistory(puzzleId);
   show('summaryScreen');
 }
 
 function showResult() {
-  renderHistory(isArchiveMode ? 'archive' : ACTIVE_PUZZLE.id);
   show('resultScreen');
 }
 
@@ -521,63 +514,6 @@ function copyResult() {
 
 
 
-
-// ---- PERSONAL HISTORY ----
-const HISTORY_KEY = 'onsdagsnott_history';
-
-function saveToHistory(puzzleId, puzzleTitle, elapsed, feil, won) {
-  const history = getHistory();
-  history.unshift({
-    id: puzzleId,
-    title: puzzleTitle,
-    time: elapsed,
-    feil: feil,
-    won: won,
-    date: new Date().toLocaleDateString('no-NO', {day:'numeric', month:'short'})
-  });
-  // Keep max 50 entries
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 50)));
-}
-
-function getHistory() {
-  try {
-    return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-  } catch { return []; }
-}
-
-function renderHistory(currentId) {
-  const history = getHistory();
-  const el = document.getElementById('historySection');
-  if (!history.length) { el.innerHTML = ''; return; }
-
-  // Best stats
-  const bestTime = Math.min(...history.filter(h => h.won).map(h => h.time));
-  const bestFeil = Math.min(...history.map(h => h.feil));
-  const streak = history.filter(h => h.won).length;
-
-  let html = `<div class="history-title">Din historikk (${history.length} nøtter spilt)</div>`;
-  html += `<div class="best-stat">
-    <div><strong>${fmt(bestTime === Infinity ? 0 : bestTime)}</strong><span>Beste tid</span></div>
-    <div><strong>${bestFeil}</strong><span>Færreste feil</span></div>
-    <div><strong>${streak}/${history.length}</strong><span>Fullført</span></div>
-  </div>`;
-
-  html += `<div class="history-wrap">
-    <div class="history-head"><span>Nøtt</span><span>Tid</span><span style="text-align:center">Feil</span><span style="text-align:right">Resultat</span></div>`;
-
-  history.forEach(h => {
-    const isCurrent = h.id === currentId && history.indexOf(h) === 0;
-    html += `<div class="history-row${isCurrent ? ' current' : ''}">
-      <div><div class="h-puzzle">${esc(h.title)}</div><div class="h-date">${h.date}</div></div>
-      <div class="h-time">${fmt(h.time)}</div>
-      <div class="h-feil">${h.feil}</div>
-      <div class="h-emoji">${h.won ? '✅' : '❌'}</div>
-    </div>`;
-  });
-
-  html += '</div>';
-  el.innerHTML = html;
-}
 
 function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
