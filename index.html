@@ -589,42 +589,58 @@ function generateCode() {
   const pw = words('pw2');
 
   const err = document.getElementById('genErr');
-  if (!id || !title || !ycat || !gcat || !bcat || !pcat) { err.textContent = 'Fyll inn alle felter.'; return; }
+  if (!id || !title || !subtitle || !ycat || !gcat || !bcat || !pcat) { err.textContent = 'Fyll inn alle felter.'; return; }
   if ([yw,gw,bw,pw].some(w => w.length !== 4)) { err.textContent = 'Hver gruppe må ha nøyaktig 4 ord (kommaseparert).'; return; }
   err.textContent = '';
 
-  // Move current active puzzle to archive
-  const currentActive = {...ACTIVE_PUZZLE};
-  ARCHIVE.unshift({
-    id: currentActive.id,
-    title: title,
-    subtitle: subtitle,
-    groups: currentActive.groups
-  });
+  const f = (arr) => arr.map(w => `'${w}'`).join(',');
 
-  // Update active puzzle
-  ACTIVE_PUZZLE.id = id;
-  ACTIVE_PUZZLE.groups = [
-    {bg:'#f9df6d', label:'Lett',      cat: ycat, words: yw},
-    {bg:'#a0c35a', label:'Medium',    cat: gcat, words: gw},
-    {bg:'#b0c4ef', label:'Vanskelig', cat: bcat, words: bw},
-    {bg:'#ba81c5', label:'Djevelsk',  cat: pcat, words: pw},
-  ];
+  const activePuzzleCode = `let ACTIVE_PUZZLE = {
+  id: '${id}',
+  title: 'Ukens nøtt',
+  groups: [
+    {bg:'#f9df6d', label:'Lett',      cat:'${ycat}', words:[${f(yw)}]},
+    {bg:'#a0c35a', label:'Medium',    cat:'${gcat}', words:[${f(gw)}]},
+    {bg:'#b0c4ef', label:'Vanskelig', cat:'${bcat}', words:[${f(bw)}]},
+    {bg:'#ba81c5', label:'Djevelsk',  cat:'${pcat}', words:[${f(pw)}]},
+  ]
+};`;
 
-  // Update archive list
-  renderArchiveList();
+  const archiveEntryCode = `  {
+    id: '${ACTIVE_PUZZLE.id}',
+    title: '${title}',
+    subtitle: '${subtitle}',
+    groups: [
+      {bg:'#f9df6d', label:'Lett',      cat:'${ACTIVE_PUZZLE.groups[0].cat}', words:[${f(ACTIVE_PUZZLE.groups[0].words)}]},
+      {bg:'#a0c35a', label:'Medium',    cat:'${ACTIVE_PUZZLE.groups[1].cat}', words:[${f(ACTIVE_PUZZLE.groups[1].words)}]},
+      {bg:'#b0c4ef', label:'Vanskelig', cat:'${ACTIVE_PUZZLE.groups[2].cat}', words:[${f(ACTIVE_PUZZLE.groups[2].words)}]},
+      {bg:'#ba81c5', label:'Djevelsk',  cat:'${ACTIVE_PUZZLE.groups[3].cat}', words:[${f(ACTIVE_PUZZLE.groups[3].words)}]},
+    ]
+  },`;
 
-  // Close admin and start new game
-  closeAdmin();
-  clearAdmin();
-  show('loginScreen');
+  const fullCode = `// 1. ERSTATT den eksisterende "let ACTIVE_PUZZLE" med dette:
 
-  // Show confirmation
-  setTimeout(() => {
-    alert('✅ Ny nøtt er klar! Trykk Start for å spille.');
-  }, 300);
+${activePuzzleCode}
+
+// 2. LEGG TIL øverst i "let ARCHIVE = [" listen:
+
+${archiveEntryCode}`;
+
+  document.getElementById('codeOutput').value = fullCode;
+  document.getElementById('codeSection').style.display = 'block';
+  document.getElementById('copyMsg').textContent = '';
+  document.getElementById('codeOutput').scrollIntoView({behavior: 'smooth'});
 }
 
+
+function copyCode() {
+  const el = document.getElementById('codeOutput');
+  el.select();
+  navigator.clipboard.writeText(el.value).then(() => {
+    document.getElementById('copyMsg').textContent = '✓ Kopiert! Lim inn i GitHub.';
+    setTimeout(() => document.getElementById('copyMsg').textContent = '', 3000);
+  });
+}
 
 function clearAdmin() {
   ['aId','aTitle','aSubtitle','ycat','yw','gcat','gw','bcat','bw','pcat','pw2'].forEach(id => {
@@ -709,8 +725,16 @@ window.addEventListener('load', function() {
 
       <div class="admin-actions">
         <button class="btn ghost" onclick="previewPuzzle()">Forhåndsvisning</button>
-        <button class="btn" onclick="generateCode()">Erstatt onsdagsnøtten</button>
+        <button class="btn" onclick="generateCode()">Generer kode</button>
         <button class="btn ghost" onclick="clearAdmin()">Tøm</button>
+      </div>
+      <div id="codeSection" style="display:none;margin-top:1.5rem">
+        <div class="admin-section">
+          <label>Kode til GitHub — kopier og lim inn</label>
+          <textarea id="codeOutput" readonly style="width:100%;font-family:var(--mono);font-size:11px;padding:12px;border-radius:var(--r);border:1.5px solid var(--border);background:#f9f9f9;min-height:160px;resize:vertical;outline:none;box-sizing:border-box"></textarea>
+        </div>
+        <button class="btn" onclick="copyCode()">📋 Kopier kode</button>
+        <div class="copy-success" id="copyMsg" style="font-size:13px;color:#2d6a1f;margin-top:6px;min-height:16px;font-weight:600"></div>
       </div>
       <div id="previewSection" style="display:none">
         <h3>Forhåndsvisning</h3>
