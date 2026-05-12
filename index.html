@@ -750,3 +750,29 @@ window.addEventListener('load', function() {
 
 </body>
 </html>
+// 1. ERSTATT den eksisterende "let ACTIVE_PUZZLE" med dette:
+
+let ACTIVE_PUZZLE = {
+  id: '13.05.2026',
+  title: 'Ukens nøtt',
+  groups: [
+    {bg:'#f9df6d', label:'Lett',      cat:'De grunnleggende smakene', words:['SØTT','BITTER','SURT','UMAMI']},
+    {bg:'#a0c35a', label:'Medium',    cat:'Ord som betyr det samme på norsk og på engelsk', words:['ARM','FILM','SALT','BLIND']},
+    {bg:'#b0c4ef', label:'Vanskelig', cat:'Ordtak som har ordet kald/kaldt i seg', words:['FØTTER','SKULDER','BLOD','HODET']},
+    {bg:'#ba81c5', label:'Djevelsk',  cat:'Kjente trekanter', words:['PASCALS','DRAMA','BERMUDA','TREENIGHETEN']},
+  ]
+};
+
+// 2. LEGG TIL øverst i "let ARCHIVE = [" listen:
+
+  {
+    id: 'nott_2025w20',
+    title: 'Uke 20',
+    subtitle: 'Nivå: umulig!',
+    groups: [
+      {bg:'#f9df6d', label:'Lett',      cat:'___ bane', words:['SYKKEL','BOWLING','FOTBALL','LØPE']},
+      {bg:'#a0c35a', label:'Medium',    cat:'Type dans', words:['SALSA','SWING','SAMBA','VALS']},
+      {bg:'#b0c4ef', label:'Vanskelig', cat:'NATO-alfabetet', words:['ROMEO','FOXTROT','TANGO','GOLF']},
+      {bg:'#ba81c5', label:'Djevelsk',  cat:'Den ene av en duo', words:['BONNIE','TOM','ASTERIX','TIMON']},
+    ]
+  },
