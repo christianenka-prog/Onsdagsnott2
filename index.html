@@ -58,8 +58,8 @@
   .solved-card .s-cat { font-size:18px; font-weight:800; color:#1a1a1a; text-align:center; }
   .solved-card .s-words { font-size:13px; margin-top:3px; color:rgba(0,0,0,0.55); text-align:center; font-weight:500; }
   @keyframes popIn { 0%{opacity:0;transform:scale(.95)} 60%{transform:scale(1.02)} 100%{opacity:1;transform:scale(1)} }
-  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
-  .tile { background:var(--tile-bg); border:none; border-radius:var(--r); padding:18px 4px; text-align:center; font-size:17px; font-weight:800; text-transform:uppercase; letter-spacing:.02em; cursor:pointer; user-select:none; transition:background .1s, transform .1s; min-height:90px; display:flex; align-items:center; justify-content:center; line-height:1.2; color:var(--text); }
+  .grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:20px; }
+  .tile { background:var(--tile-bg); border:none; border-radius:var(--r); padding:18px 6px; text-align:center; font-size:clamp(11px,3.6vw,17px); font-weight:800; text-transform:uppercase; letter-spacing:.02em; cursor:pointer; user-select:none; transition:background .1s, transform .1s; min-height:90px; display:flex; align-items:center; justify-content:center; line-height:1.2; color:var(--text); overflow-wrap:anywhere; hyphens:auto; }
   .tile:hover { background:var(--tile-hover); }
   .tile.selected { background:var(--tile-sel); color:#ffffff; transform:scale(1.04); }
   .tile.shake { animation:shake .4s ease; }
@@ -110,8 +110,9 @@
   .color-dot { width:12px; height:12px; border-radius:3px; flex-shrink:0; }
   .admin-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:1rem; }
   .admin-err { font-size:13px; color:#d0021b; margin-top:6px; min-height:16px; }
-  .preview-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:10px; }
-  .preview-tile { background:var(--tile-bg); border-radius:6px; padding:10px 4px; text-align:center; font-size:12px; font-weight:800; text-transform:uppercase; min-height:48px; display:flex; align-items:center; justify-content:center; line-height:1.2; }
+  .admin-help { font-size:13px; color:var(--muted); line-height:1.5; margin-bottom:10px; }
+  .preview-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin-bottom:10px; }
+  .preview-tile { background:var(--tile-bg); border-radius:6px; padding:10px 4px; text-align:center; font-size:12px; font-weight:800; text-transform:uppercase; min-height:48px; display:flex; align-items:center; justify-content:center; line-height:1.2; overflow-wrap:anywhere; }
   .preview-card { border-radius:6px; padding:8px 14px; margin-bottom:6px; }
   .preview-card .pc-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:rgba(0,0,0,0.5); }
   .preview-card .pc-cat { font-size:14px; font-weight:800; }
@@ -203,16 +204,16 @@
     </div>
     <div id="adminPanel" style="display:none">
       <div class="admin-section">
-        <label>Uke-ID (unik per nøtt, f.eks. 20.05.2026)</label>
-        <input type="text" id="aId" placeholder="20.05.2026" />
+        <label>Uke-ID for den NYE nøtta (unik, f.eks. 07.10.2026)</label>
+        <input type="text" id="aId" placeholder="07.10.2026" />
       </div>
       <div class="admin-section">
-        <label>Uketittel for arkivet (f.eks. Uke 21)</label>
-        <input type="text" id="aTitle" placeholder="Uke 21" />
+        <label>Arkivtittel for nøtta som ligger ute NÅ (f.eks. Uke 40)</label>
+        <input type="text" id="aTitle" placeholder="Uke 40" />
       </div>
       <div class="admin-section">
-        <label>Arkiv-undertittel (hint om innholdet)</label>
-        <input type="text" id="aSubtitle" placeholder="Trekanter · Smaker · ..." />
+        <label>Arkiv-undertittel for nøtta som ligger ute NÅ</label>
+        <input type="text" id="aSubtitle" placeholder="Hint om innholdet" />
       </div>
       <div class="admin-section">
         <div class="group-label-row"><div class="color-dot" style="background:#f9df6d"></div>Gul — Lett</div>
@@ -244,16 +245,20 @@
       </div>
       <div class="admin-actions">
         <button class="btn ghost" onclick="previewPuzzle()">Forhåndsvisning</button>
-        <button class="btn" onclick="generateCode()">Generer kode</button>
+        <button class="btn" onclick="generateCode()">Generer hel fil</button>
         <button class="btn ghost" onclick="clearAdmin()">Tøm</button>
       </div>
       <div class="admin-err" id="genErr"></div>
       <div id="codeSection" style="display:none;margin-top:1.5rem">
         <div class="admin-section">
-          <label>Kode til GitHub — kopier og lim inn</label>
+          <label>Hele filen — erstatt ALT i GitHub med dette</label>
+          <p class="admin-help">I GitHub: åpne filen, klikk blyanten, marker alt (Ctrl/Cmd + A), lim inn og klikk «Commit changes». Nøtta som ligger ute nå flyttes automatisk øverst i arkivet.</p>
           <textarea id="codeOutput" readonly style="width:100%;font-family:var(--mono);font-size:11px;padding:12px;border-radius:var(--r);border:1.5px solid var(--border);background:#f9f9f9;min-height:160px;resize:vertical;outline:none;box-sizing:border-box"></textarea>
         </div>
-        <button class="btn" onclick="copyCode()">📋 Kopier kode</button>
+        <div class="admin-actions">
+          <button class="btn" onclick="copyCode()">📋 Kopier hele filen</button>
+          <button class="btn ghost" onclick="downloadCode()">⬇️ Last ned fil</button>
+        </div>
         <div style="font-size:13px;color:#2d6a1f;margin-top:6px;font-weight:600" id="copyMsg"></div>
       </div>
       <div id="previewSection" style="display:none">
@@ -265,95 +270,101 @@
   </div>
 </div>
 <script>
- 
+// Kopi av siden slik den ble lastet (brukes hvis siden ikke kan hente seg selv)
+const PAGE_SNAPSHOT = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+// ==== NØTTER START ====
 let ACTIVE_PUZZLE = {
-  id: '07.10.2026',
-  title: 'Ukens nøtt',
+  id: "30.09.2026",
+  title: "Ukens nøtt",
   groups: [
-    {bg:'#f9df6d', label:'Lett',      cat:'Noe du har på deg', words:['HJELM','DRAKT','TOPP','TRENCHCOAT']},
-    {bg:'#a0c35a', label:'Medium',    cat:'Noe som kan ringe', words:['TELEFON','BJELLE','ØRE','VEKKERKLOKKE']},
-    {bg:'#b0c4ef', label:'Vanskelig', cat:'Brann_____', words:['BIL','ALARM','SLUKKER','STASJON']},
-    {bg:'#ba81c5', label:'Djevelsk',  cat:'Skjuler et tall', words:['TOTAL','TREKK','SEKSJON','FEMININ']},
+    {bg:"#f9df6d", label:"Lett", cat:"Sjakkbrikker", words:["TÅRN", "LØPER", "BONDE", "DRONNING"]},
+    {bg:"#a0c35a", label:"Medium", cat:"SJØ_____", words:["STJERNE", "HEST", "SYK", "RØVER"]},
+    {bg:"#b0c4ef", label:"Vanskelig", cat:"Ting med tenner", words:["SAG", "KAM", "GLIDELÅS", "TANNHJUL"]},
+    {bg:"#ba81c5", label:"Djevelsk", cat:"Blir et nytt ord baklengs", words:["SOL", "LAM", "MUS", "SEL"]},
   ]
 };
+
 let ARCHIVE = [
- id: '30.09.2026',
-    title: 'Uke 41',
-    subtitle: 'God blandet',
+  {
+    id: "23.06.2026",
+    title: "Uke 40",
+    subtitle: "Hemmelig",
     groups: [
-      {bg:'#f9df6d', label:'Lett',      cat:'Sjakkbrikker', words:['TÅRN','LØPER','BONDE','DRONNING']},
-      {bg:'#a0c35a', label:'Medium',    cat:'SJØ_____', words:['STJERNE','HEST','SYK','RØVER']},
-      {bg:'#b0c4ef', label:'Vanskelig', cat:'Ting med tenner', words:['SAG','KAM','GLIDELÅS','TANNHJUL']},
-      {bg:'#ba81c5', label:'Djevelsk',  cat:'Blir et nytt ord baklengs', words:['SOL','LAM','MUS','SEL']},
-    ]
-  },
- {
-    id: '03.06.2026',
-    title: 'Uke 26',
-    subtitle: 'Dagsaktuelt',
-    groups: [
-      {bg:'#f9df6d', label:'Lett',      cat:'Krydder', words:['PEPPER','KARRI','KANEL','TIMIAN']},
-      {bg:'#a0c35a', label:'Medium',    cat:'___vann', words:['SALT','GRUNN','FERSK','REGN']},
-      {bg:'#b0c4ef', label:'Vanskelig', cat:'Kan beskrive en vits', words:['TØRR','FLAT','GROV','SYK']},
-      {bg:'#ba81c5', label:'Djevelsk',  cat:'Også et fornavn', words:['BJØRN','LIV','GRO','DAG']},
+      {bg:"#f9df6d", label:"Lett", cat:"Fotballterminologi", words:["HANDS", "FRISPARK", "CORNER", "OFFSIDE"]},
+      {bg:"#a0c35a", label:"Medium", cat:"Juridiske ord", words:["FORSVAR", "DOMMER", "VITNE", "STRAFFE"]},
+      {bg:"#b0c4ef", label:"Vanskelig", cat:"Sittemøbler", words:["BENK", "PALL", "KRAKK", "STOL"]},
+      {bg:"#ba81c5", label:"Djevelsk", cat:"Beskriver et redskap", words:["SPISS", "SKARP", "GROV", "BUTT"]},
     ]
   },
   {
- id: '27.05.2026',
-    title: 'Uke 22',
-    subtitle: 'Noe interessant',
+    id: "03.06.2026",
+    title: "Uke 26",
+    subtitle: "Dagsaktuelt",
     groups: [
-      {bg:'#f9df6d', label:'Lett',      cat:'USA-titler', words:['SENATOR','GUVERNOR','SHERIFF','MAYOR']},
-      {bg:'#a0c35a', label:'Medium',    cat:'Ting som kan være åpne', words:['KONTOR','SÅR','BOK','SAK']},
-      {bg:'#b0c4ef', label:'Vanskelig', cat:'Kortspill', words:['SVARTEPER','KRIG','PRESIDENT','IDIOT']},
-      {bg:'#ba81c5', label:'Djevelsk',  cat:'Substantiv som også er verb', words:['DØR','GIR','BAR','FÅR']},
-    ]
-  },
-   {
-    id: '19.05.2026',
-    title: 'Uke 21',
-    subtitle: 'Litt av hvert',
-    groups: [
-      {bg:'#f9df6d', label:'Lett',      cat:'Ulike lyder', words:['BANK','DUNK','BRØL','SKRIK']},
-      {bg:'#a0c35a', label:'Medium',    cat:'KLP sine forretningsområder', words:['FORSIKRING','PENSJON','EIENDOM','KAPITALFORVALTNING']},
-      {bg:'#b0c4ef', label:'Vanskelig', cat:'___kort', words:['GAVE','SPILLE','FØRER','MÅNEDS']},
-      {bg:'#ba81c5', label:'Djevelsk',  cat:'Munch-malerier', words:['BRUD','SOLEN','VAMPYR','MADONNA']},
+      {bg:"#f9df6d", label:"Lett", cat:"Krydder", words:["PEPPER", "KARRI", "KANEL", "TIMIAN"]},
+      {bg:"#a0c35a", label:"Medium", cat:"___vann", words:["SALT", "GRUNN", "FERSK", "REGN"]},
+      {bg:"#b0c4ef", label:"Vanskelig", cat:"Kan beskrive en vits", words:["TØRR", "FLAT", "GROV", "SYK"]},
+      {bg:"#ba81c5", label:"Djevelsk", cat:"Også et fornavn", words:["BJØRN", "LIV", "GRO", "DAG"]},
     ]
   },
   {
-    id: '13.05.2026',
-    title: 'Uke 20',
-    subtitle: 'Ekstra vanskelig',
+    id: "27.05.2026",
+    title: "Uke 22",
+    subtitle: "Noe interessant",
     groups: [
-      {bg:'#f9df6d', label:'Lett',      cat:'De grunnleggende smakene', words:['SØTT','BITTER','SURT','UMAMI']},
-      {bg:'#a0c35a', label:'Medium',    cat:'Ord som betyr det samme på norsk og engelsk', words:['ARM','FILM','SALT','BLIND']},
-      {bg:'#b0c4ef', label:'Vanskelig', cat:'Ordtak som har ordet kald/kaldt i seg', words:['FØTTER','SKULDER','BLOD','HODET']},
-      {bg:'#ba81c5', label:'Djevelsk',  cat:'Kjente trekanter', words:['PASCALS','DRAMA','BERMUDA','TREENIGHETEN']},
+      {bg:"#f9df6d", label:"Lett", cat:"USA-titler", words:["SENATOR", "GUVERNOR", "SHERIFF", "MAYOR"]},
+      {bg:"#a0c35a", label:"Medium", cat:"Ting som kan være åpne", words:["KONTOR", "SÅR", "BOK", "SAK"]},
+      {bg:"#b0c4ef", label:"Vanskelig", cat:"Kortspill", words:["SVARTEPER", "KRIG", "PRESIDENT", "IDIOT"]},
+      {bg:"#ba81c5", label:"Djevelsk", cat:"Substantiv som også er verb", words:["DØR", "GIR", "BAR", "FÅR"]},
     ]
   },
   {
-    id: 'nott_2025w19e',
-    title: 'Uke 19',
-    subtitle: 'Hemmelig',
+    id: "19.05.2026",
+    title: "Uke 21",
+    subtitle: "Litt av hvert",
     groups: [
-      {bg:'#f9df6d', label:'Lett',      cat:'Slang for penger',              words:['GRYN','SPENN','LAPPER','DALER']},
-      {bg:'#a0c35a', label:'Medium',    cat:'Pizzakjeder i Norge',           words:['PEPPES','PIZZABAKEREN','DOMINOS','EGON']},
-      {bg:'#b0c4ef', label:'Vanskelig', cat:'Kjente dyr med egennavn',       words:['HARAMBE','JULIUS','LASSIE','DOLLY']},
-      {bg:'#ba81c5', label:'Djevelsk',  cat:'Alle heter Donald til fornavn', words:['TRUMP','DUCK','GLOVER','SUTHERLAND']},
+      {bg:"#f9df6d", label:"Lett", cat:"Ulike lyder", words:["BANK", "DUNK", "BRØL", "SKRIK"]},
+      {bg:"#a0c35a", label:"Medium", cat:"KLP sine forretningsområder", words:["FORSIKRING", "PENSJON", "EIENDOM", "KAPITALFORVALTNING"]},
+      {bg:"#b0c4ef", label:"Vanskelig", cat:"___kort", words:["GAVE", "SPILLE", "FØRER", "MÅNEDS"]},
+      {bg:"#ba81c5", label:"Djevelsk", cat:"Munch-malerier", words:["BRUD", "SOLEN", "VAMPYR", "MADONNA"]},
     ]
   },
   {
-    id: 'nott_2025w18',
-    title: 'Uke 18',
-    subtitle: 'Hemmelig',
+    id: "13.05.2026",
+    title: "Uke 20",
+    subtitle: "Ekstra vanskelig",
     groups: [
-      {bg:'#f9df6d', label:'Lett',      cat:'Kan stå foran "-tur"',           words:['SPASER','FJELL','KVELD','LUFTE']},
-      {bg:'#a0c35a', label:'Medium',    cat:'Ord for å sovne',                words:['DUPPE AV','NIKKE','DABBE AV','SLUMRE']},
-      {bg:'#b0c4ef', label:'Vanskelig', cat:'Også en norsk kommune',          words:['MOSS','SAND','TØNNE','TINN']},
-      {bg:'#ba81c5', label:'Djevelsk',  cat:'Inneholder et skjult norsk dyr', words:['TAPET','GULVET','BREVET','FORMEL']},
+      {bg:"#f9df6d", label:"Lett", cat:"De grunnleggende smakene", words:["SØTT", "BITTER", "SURT", "UMAMI"]},
+      {bg:"#a0c35a", label:"Medium", cat:"Ord som betyr det samme på norsk og engelsk", words:["ARM", "FILM", "SALT", "BLIND"]},
+      {bg:"#b0c4ef", label:"Vanskelig", cat:"Ordtak som har ordet kald/kaldt i seg", words:["FØTTER", "SKULDER", "BLOD", "HODET"]},
+      {bg:"#ba81c5", label:"Djevelsk", cat:"Kjente trekanter", words:["PASCALS", "DRAMA", "BERMUDA", "TREENIGHETEN"]},
     ]
-  }
+  },
+  {
+    id: "nott_2025w19e",
+    title: "Uke 19",
+    subtitle: "Hemmelig",
+    groups: [
+      {bg:"#f9df6d", label:"Lett", cat:"Slang for penger", words:["GRYN", "SPENN", "LAPPER", "DALER"]},
+      {bg:"#a0c35a", label:"Medium", cat:"Pizzakjeder i Norge", words:["PEPPES", "PIZZABAKEREN", "DOMINOS", "EGON"]},
+      {bg:"#b0c4ef", label:"Vanskelig", cat:"Kjente dyr med egennavn", words:["HARAMBE", "JULIUS", "LASSIE", "DOLLY"]},
+      {bg:"#ba81c5", label:"Djevelsk", cat:"Alle heter Donald til fornavn", words:["TRUMP", "DUCK", "GLOVER", "SUTHERLAND"]},
+    ]
+  },
+  {
+    id: "nott_2025w18",
+    title: "Uke 18",
+    subtitle: "Hemmelig",
+    groups: [
+      {bg:"#f9df6d", label:"Lett", cat:"Kan stå foran \"-tur\"", words:["SPASER", "FJELL", "KVELD", "LUFTE"]},
+      {bg:"#a0c35a", label:"Medium", cat:"Ord for å sovne", words:["DUPPE AV", "NIKKE", "DABBE AV", "SLUMRE"]},
+      {bg:"#b0c4ef", label:"Vanskelig", cat:"Også en norsk kommune", words:["MOSS", "SAND", "TØNNE", "TINN"]},
+      {bg:"#ba81c5", label:"Djevelsk", cat:"Inneholder et skjult norsk dyr", words:["TAPET", "GULVET", "BREVET", "FORMEL"]},
+    ]
+  },
 ];
+// ==== NØTTER SLUTT ====
 
 let currentPuzzle = null;
 let isArchiveMode = false;
@@ -381,7 +392,7 @@ function renderArchiveList() {
   const el = document.getElementById('archiveList'); el.innerHTML = '';
   ARCHIVE.forEach(p => {
     const div = document.createElement('div'); div.className = 'archive-item';
-    div.innerHTML = `<div><div class="a-title">${p.title}</div><div class="a-sub">${p.subtitle}</div></div><div class="a-arrow">›</div>`;
+    div.innerHTML = `<div><div class="a-title">${esc(p.title)}</div><div class="a-sub">${esc(p.subtitle)}</div></div><div class="a-arrow">›</div>`;
     div.onclick = () => startArchiveGame(p);
     el.appendChild(div);
   });
@@ -398,7 +409,7 @@ function startGame() {
 
 function startArchiveGame(puzzle) {
   isArchiveMode = true;
-  document.getElementById('gameLabel').innerHTML = `${puzzle.title}<span class="archive-badge">Arkiv</span>`;
+  document.getElementById('gameLabel').innerHTML = `${esc(puzzle.title)}<span class="archive-badge">Arkiv</span>`;
   document.getElementById('timerEl').textContent = '00:00';
   loadPuzzle(puzzle.groups);
   show('gameScreen');
@@ -458,7 +469,8 @@ function doGuess() {
     mistakes++;
     document.getElementById('feilTeller').textContent = 'Feil: ' + mistakes;
     document.querySelectorAll('.tile.selected').forEach(t => { t.classList.add('shake'); setTimeout(() => t.classList.remove('shake'), 450); });
-    setTimeout(() => clearSel(), 120);
+    document.getElementById('guessBtn').disabled = true;
+    setTimeout(() => clearSel(), 450);
     setMsg(oneAway ? 'Én unna — prøv igjen!' : 'Feil. Prøv igjen.');
   }
 }
@@ -466,7 +478,7 @@ function doGuess() {
 function showSolvedCard(g) {
   const el = document.createElement('div'); el.className = 'solved-card';
   el.style.background = g.bg;
-  el.innerHTML = `<div class="s-label">${g.label}</div><div class="s-cat">${g.cat}</div><div class="s-words">${g.words.join(' · ')}</div>`;
+  el.innerHTML = `<div class="s-label">${esc(g.label)}</div><div class="s-cat">${esc(g.cat)}</div><div class="s-words">${g.words.map(esc).join(' · ')}</div>`;
   document.getElementById('solvedArea').appendChild(el);
 }
 
@@ -496,7 +508,7 @@ function finishGame() {
   });
 
   document.getElementById('summaryGroups').innerHTML = currentPuzzle.map(g =>
-    `<div class="summary-card" style="background:${g.bg}"><div class="sc-label">${g.label}</div><div class="sc-cat">${g.cat}</div><div class="sc-words">${g.words.join(' · ')}</div></div>`
+    `<div class="summary-card" style="background:${g.bg}"><div class="sc-label">${esc(g.label)}</div><div class="sc-cat">${esc(g.cat)}</div><div class="sc-words">${g.words.map(esc).join(' · ')}</div></div>`
   ).join('');
 
   document.getElementById('resultTitle').textContent = won ? 'Bra jobbet! 🎉' : 'Bedre lykke neste gang';
@@ -527,10 +539,14 @@ function copyResult() {
   });
 }
 
-function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ---- ADMIN ----
 const ADMIN_PW = 'klpnøtt2025';
+// Markørene bygges av to deler så de ikke forveksles med de ekte markørene over
+const DATA_START = '// ==== NØTTER' + ' START ====';
+const DATA_END = '// ==== NØTTER' + ' SLUTT ====';
+let generatedFile = '';
 
 function openAdmin() {
   document.getElementById('adminOverlay').classList.add('open');
@@ -556,41 +572,96 @@ function words(id) {
   return document.getElementById(id).value.split(',').map(w => w.trim().toUpperCase()).filter(Boolean);
 }
 
-function previewPuzzle() {
-  const groups = [
-    {bg:'#f9df6d', cat: document.getElementById('ycat').value.trim(), words: words('yw'), label:'Lett'},
-    {bg:'#a0c35a', cat: document.getElementById('gcat').value.trim(), words: words('gw'), label:'Medium'},
-    {bg:'#b0c4ef', cat: document.getElementById('bcat').value.trim(), words: words('bw'), label:'Vanskelig'},
-    {bg:'#ba81c5', cat: document.getElementById('pcat').value.trim(), words: words('pw2'), label:'Djevelsk'},
+function readGroups() {
+  return [
+    {bg:'#f9df6d', label:'Lett',      cat: document.getElementById('ycat').value.trim(), words: words('yw')},
+    {bg:'#a0c35a', label:'Medium',    cat: document.getElementById('gcat').value.trim(), words: words('gw')},
+    {bg:'#b0c4ef', label:'Vanskelig', cat: document.getElementById('bcat').value.trim(), words: words('bw')},
+    {bg:'#ba81c5', label:'Djevelsk',  cat: document.getElementById('pcat').value.trim(), words: words('pw2')},
   ];
+}
+
+function previewPuzzle() {
+  const groups = readGroups();
   const err = document.getElementById('genErr');
   if (groups.some(g => g.words.length !== 4)) { err.textContent = 'Hver gruppe må ha nøyaktig 4 ord.'; return; }
   err.textContent = '';
   const allWords = groups.flatMap(g => g.words).sort(() => Math.random() - 0.5);
-  document.getElementById('previewGrid').innerHTML = allWords.map(w => `<div class="preview-tile">${w}</div>`).join('');
+  document.getElementById('previewGrid').innerHTML = allWords.map(w => `<div class="preview-tile">${esc(w)}</div>`).join('');
   document.getElementById('previewCards').innerHTML = groups.map(g =>
-    `<div class="preview-card" style="background:${g.bg}"><div class="pc-label">${g.label}</div><div class="pc-cat">${g.cat || '—'}</div><div class="pc-words">${g.words.join(' · ')}</div></div>`
+    `<div class="preview-card" style="background:${g.bg}"><div class="pc-label">${esc(g.label)}</div><div class="pc-cat">${esc(g.cat || '—')}</div><div class="pc-words">${g.words.map(esc).join(' · ')}</div></div>`
   ).join('');
   document.getElementById('previewSection').style.display = 'block';
 }
 
-function generateCode() {
+// Gjør tekst trygg i JavaScript (tåler apostrofer, anførselstegn osv.)
+function q(s) { return JSON.stringify(String(s)).replace(/<\//g, '<\\/'); }
+
+function groupsCode(groups, ind) {
+  return groups.map(g =>
+    `${ind}{bg:${q(g.bg)}, label:${q(g.label)}, cat:${q(g.cat)}, words:[${g.words.map(q).join(', ')}]},`
+  ).join('\n');
+}
+
+function buildDataBlock(active, archive) {
+  let s = DATA_START + '\n';
+  s += 'let ACTIVE_PUZZLE = {\n';
+  s += '  id: ' + q(active.id) + ',\n';
+  s += '  title: ' + q(active.title) + ',\n';
+  s += '  groups: [\n' + groupsCode(active.groups, '    ') + '\n  ]\n};\n\n';
+  s += 'let ARCHIVE = [\n';
+  s += archive.map(p =>
+    '  {\n' +
+    '    id: ' + q(p.id) + ',\n' +
+    '    title: ' + q(p.title) + ',\n' +
+    '    subtitle: ' + q(p.subtitle) + ',\n' +
+    '    groups: [\n' + groupsCode(p.groups, '      ') + '\n    ]\n' +
+    '  },'
+  ).join('\n');
+  s += '\n];\n' + DATA_END;
+  return s;
+}
+
+async function getSource() {
+  // Henter den publiserte filen (GitHub Pages). Faller tilbake på kopien som ble tatt ved lasting.
+  try {
+    const r = await fetch(location.href.split('#')[0], {cache:'no-store'});
+    if (r.ok) {
+      const t = await r.text();
+      if (t.includes(DATA_START) && t.includes(DATA_END)) return t;
+    }
+  } catch (e) {}
+  return PAGE_SNAPSHOT;
+}
+
+async function generateCode() {
+  const err = document.getElementById('genErr');
   const id = document.getElementById('aId').value.trim();
   const title = document.getElementById('aTitle').value.trim();
   const subtitle = document.getElementById('aSubtitle').value.trim();
-  const ycat = document.getElementById('ycat').value.trim();
-  const gcat = document.getElementById('gcat').value.trim();
-  const bcat = document.getElementById('bcat').value.trim();
-  const pcat = document.getElementById('pcat').value.trim();
-  const yw = words('yw'), gw = words('gw'), bw = words('bw'), pw = words('pw2');
-  const err = document.getElementById('genErr');
-  if (!id || !title || !subtitle || !ycat || !gcat || !bcat || !pcat) { err.textContent = 'Fyll inn alle felter.'; return; }
-  if ([yw,gw,bw,pw].some(w => w.length !== 4)) { err.textContent = 'Hver gruppe må ha nøyaktig 4 ord (kommaseparert).'; return; }
+  const groups = readGroups();
+
+  if (!id || !title || !subtitle || groups.some(g => !g.cat)) { err.textContent = 'Fyll inn alle felter.'; return; }
+  if (groups.some(g => g.words.length !== 4)) { err.textContent = 'Hver gruppe må ha nøyaktig 4 ord (kommaseparert).'; return; }
+  const all = groups.flatMap(g => g.words);
+  if (new Set(all).size !== all.length) { err.textContent = 'Samme ord står i flere grupper. Alle 16 ord må være forskjellige.'; return; }
+  if (id === ACTIVE_PUZZLE.id || ARCHIVE.some(p => p.id === id)) { err.textContent = `Uke-ID «${id}» er allerede brukt. Velg en ny.`; return; }
   err.textContent = '';
-  const f = arr => arr.map(w => `'${w}'`).join(',');
-  const newActive = `let ACTIVE_PUZZLE = {\n  id: '${id}',\n  title: 'Ukens nøtt',\n  groups: [\n    {bg:'#f9df6d', label:'Lett',      cat:'${ycat}', words:[${f(yw)}]},\n    {bg:'#a0c35a', label:'Medium',    cat:'${gcat}', words:[${f(gw)}]},\n    {bg:'#b0c4ef', label:'Vanskelig', cat:'${bcat}', words:[${f(bw)}]},\n    {bg:'#ba81c5', label:'Djevelsk',  cat:'${pcat}', words:[${f(pw)}]},\n  ]\n};`;
-  const archEntry = `  {\n    id: '${ACTIVE_PUZZLE.id}',\n    title: '${title}',\n    subtitle: '${subtitle}',\n    groups: [\n      {bg:'#f9df6d', label:'Lett',      cat:'${ACTIVE_PUZZLE.groups[0].cat}', words:[${f(ACTIVE_PUZZLE.groups[0].words)}]},\n      {bg:'#a0c35a', label:'Medium',    cat:'${ACTIVE_PUZZLE.groups[1].cat}', words:[${f(ACTIVE_PUZZLE.groups[1].words)}]},\n      {bg:'#b0c4ef', label:'Vanskelig', cat:'${ACTIVE_PUZZLE.groups[2].cat}', words:[${f(ACTIVE_PUZZLE.groups[2].words)}]},\n      {bg:'#ba81c5', label:'Djevelsk',  cat:'${ACTIVE_PUZZLE.groups[3].cat}', words:[${f(ACTIVE_PUZZLE.groups[3].words)}]},\n    ]\n  },`;
-  document.getElementById('codeOutput').value = `// 1. ERSTATT "let ACTIVE_PUZZLE = {..." med dette:\n\n${newActive}\n\n// 2. LEGG TIL øverst i "let ARCHIVE = [" (etter første [):\n\n${archEntry}`;
+
+  const newActive = { id, title: 'Ukens nøtt', groups };
+  const newArchive = [
+    { id: ACTIVE_PUZZLE.id, title, subtitle, groups: ACTIVE_PUZZLE.groups },
+    ...ARCHIVE
+  ];
+
+  const src = await getSource();
+  const a = src.indexOf(DATA_START);
+  const b = src.indexOf(DATA_END, a);
+  if (a < 0 || b < 0) { err.textContent = 'Fant ikke nøtte-markørene i filen. Kontakt den som satte opp siden.'; return; }
+
+  generatedFile = src.slice(0, a) + buildDataBlock(newActive, newArchive) + src.slice(b + DATA_END.length);
+
+  document.getElementById('codeOutput').value = generatedFile;
   document.getElementById('codeSection').style.display = 'block';
   document.getElementById('copyMsg').textContent = '';
   document.getElementById('codeOutput').scrollIntoView({behavior:'smooth'});
@@ -600,9 +671,23 @@ function copyCode() {
   const el = document.getElementById('codeOutput');
   el.select();
   navigator.clipboard.writeText(el.value).then(() => {
-    document.getElementById('copyMsg').textContent = '✓ Kopiert! Lim inn i GitHub.';
-    setTimeout(() => document.getElementById('copyMsg').textContent = '', 3000);
+    document.getElementById('copyMsg').textContent = '✓ Hele filen er kopiert! Erstatt alt i GitHub.';
+    setTimeout(() => document.getElementById('copyMsg').textContent = '', 4000);
+  }).catch(() => {
+    document.execCommand('copy');
+    document.getElementById('copyMsg').textContent = '✓ Kopiert.';
   });
+}
+
+function downloadCode() {
+  if (!generatedFile) return;
+  const name = (location.pathname.split('/').pop() || 'index.html');
+  const blob = new Blob([generatedFile], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name.endsWith('.html') ? name : 'index.html';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
 function clearAdmin() {
@@ -610,6 +695,7 @@ function clearAdmin() {
   document.getElementById('genErr').textContent = '';
   document.getElementById('codeSection').style.display = 'none';
   document.getElementById('previewSection').style.display = 'none';
+  generatedFile = '';
 }
 </script>
 </body>
